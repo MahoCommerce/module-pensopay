@@ -9,7 +9,7 @@
 //    $paymentData = $pensopayCheckoutHelper->getCoreSession()->getPaymentData(true);
     $paymentData = $pensopayCheckoutHelper->getCoreSession()->getPaymentData();
     if (!empty($paymentData)) {
-        $paymentData = unserialize($paymentData);
+        $paymentData = Mage::helper('core')->jsonDecode($paymentData);
     }
 ?>
 <?php if (empty($paymentData)): ?>

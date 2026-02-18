@@ -88,7 +88,7 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract {
     public function getMetadata()
     {
         if (!empty($this->getData('metadata'))) {
-            return json_decode($this->getData('metadata'), true);
+            return Mage::helper('core')->jsonDecode($this->getData('metadata'));
         }
         return [];
     }
@@ -96,7 +96,7 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract {
     public function getFirstOperation()
     {
         if (!empty($this->getOperations())) {
-            $operations = json_decode($this->getOperations(), true);
+            $operations = Mage::helper('core')->jsonDecode($this->getOperations());
             if (!empty($operations) && is_array($operations)) {
                 $firstOp = array_shift($operations);
                 if (!empty($firstOp) && is_array($firstOp)) {
@@ -115,7 +115,7 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract {
     {
         if (empty($this->_lastOperation)) {
             if (!empty($this->getOperations())) {
-                $operations = json_decode($this->getOperations(), true);
+                $operations = Mage::helper('core')->jsonDecode($this->getOperations());
                 if (!empty($operations) && is_array($operations)) {
                     $lastOp = array_pop($operations);
                     if (!empty($lastOp) && is_array($lastOp)) {
@@ -156,7 +156,8 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract {
             return;
         }
 
-        $paymentAsArray = json_decode(json_encode($payment), true);
+        $coreHelper = Mage::helper('core');
+        $paymentAsArray = $coreHelper->jsonDecode($coreHelper->jsonEncode($payment));
         $this->setReferenceId($paymentAsArray['id']);
         unset($paymentAsArray['id']); //We don't want to override the object id with the remote id
         $this->addData($paymentAsArray);
@@ -172,8 +173,8 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract {
         if (!empty($paymentAsArray['metadata']) && is_array($paymentAsArray['metadata'])) {
             $this->setFraudProbability($paymentAsArray['metadata']['fraud_suspected'] || $paymentAsArray['metadata']['fraud_reported'] ? self::FRAUD_PROBABILITY_HIGH : self::FRAUD_PROBABILITY_NONE);
         }
-        $this->setOperations(json_encode($paymentAsArray['operations']));
-        $this->setMetadata(json_encode($paymentAsArray['metadata']));
+        $this->setOperations($coreHelper->jsonEncode($paymentAsArray['operations']));
+        $this->setMetadata($coreHelper->jsonEncode($paymentAsArray['metadata']));
         $this->setHash(md5($this->getReferenceId() . $this->getLink() . $this->getAmount()));
 
         if (!empty($payment->operations)) {

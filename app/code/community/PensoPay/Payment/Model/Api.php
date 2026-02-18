@@ -138,7 +138,7 @@ class PensoPay_Payment_Model_Api
 
         //Mage::log(var_export($payment, true), null, 'request.log');
 
-        return json_decode($payment);
+        return Mage::helper('core')->jsonDecode($payment, false);
     }
 
     /**
@@ -164,7 +164,7 @@ class PensoPay_Payment_Model_Api
         $endpoint = sprintf('payments/%s', $order->getReferenceId());
         $payment = $this->request($endpoint, $request->toArray(), 'PATCH', [200]);
 
-        return json_decode($payment);
+        return Mage::helper('core')->jsonDecode($payment, false);
     }
 
     public function cancel($paymentId)
@@ -178,7 +178,7 @@ class PensoPay_Payment_Model_Api
         $endpoint = sprintf('payments/%s/cancel?synchronized', $paymentId);
         $payment = $this->request($endpoint, $request->toArray(), 'POST', [200, 202]);
 
-        return json_decode($payment);
+        return Mage::helper('core')->jsonDecode($payment, false);
     }
 
     public function refund($paymentId, $amount)
@@ -193,7 +193,7 @@ class PensoPay_Payment_Model_Api
         $endpoint = sprintf('payments/%s/refund?synchronized', $paymentId);
         $payment = $this->request($endpoint, $request->toArray(), 'POST');
 
-        return json_decode($payment);
+        return Mage::helper('core')->jsonDecode($payment, false);
     }
 
     /**
@@ -276,7 +276,7 @@ class PensoPay_Payment_Model_Api
         $link = $this->request($endpoint, $request->toArray(), 'PUT');
 
         Mage::log(var_export($link, true), null, 'request.log');
-        return json_decode($link)->url;
+        return Mage::helper('core')->jsonDecode($link, false)->url;
     }
 
     /**
@@ -296,7 +296,7 @@ class PensoPay_Payment_Model_Api
         $endpoint = sprintf('payments/%s/link', $paymentId);
         $link = $this->request($endpoint, $request->toArray(), 'DELETE', [204]); //No content returned for this
 
-        return json_decode($link)->url;
+        return Mage::helper('core')->jsonDecode($link, false)->url;
     }
 
     public function capture($paymentId, $amount)
@@ -311,7 +311,7 @@ class PensoPay_Payment_Model_Api
         $endpoint = sprintf('payments/%s/capture?synchronized', $paymentId);
         $payment = $this->request($endpoint, $request->toArray(), 'POST');
 
-        return json_decode($payment);
+        return Mage::helper('core')->jsonDecode($payment, false);
     }
 
     public function getPayment($paymentId, $store = null)
@@ -324,7 +324,7 @@ class PensoPay_Payment_Model_Api
         $endpoint = sprintf('payments/%s', $paymentId);
         $payment = $this->request($endpoint, $request->toArray(), 'GET');
 
-        return json_decode($payment);
+        return Mage::helper('core')->jsonDecode($payment, false);
     }
 
     /**
@@ -341,7 +341,7 @@ class PensoPay_Payment_Model_Api
     {
         $client = \Symfony\Component\HttpClient\HttpClient::create();
         $url = $this->baseurl . '/' . $resource;
-        $body = json_encode($data);
+        $body = Mage::helper('core')->jsonEncode($data);
 
         $response = $client->request($method, $url, [
             'headers' => [

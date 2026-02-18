@@ -9,7 +9,7 @@
 <form action="<?php echo $this->getPostActionUrl(); ?>" method="post" id="shipping_method_form">
     <div id="shipping-methods">
         <dl class="sp-methods">
-            <?php $shippingCodePrice = array(); ?>
+            <?php $shippingCodePrice = []; ?>
             <?php $_sole = count($_shippingRateGroups) == 1; foreach ($_shippingRateGroups as $code => $_rates): ?>
                 <dt><?php echo $this->escapeHtml($this->getCarrierName($code)) ?></dt>
                 <dd>

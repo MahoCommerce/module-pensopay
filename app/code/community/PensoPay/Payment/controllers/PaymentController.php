@@ -105,7 +105,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                 'cancelurl' => Mage::app()->getStore()->getUrl('pensopay/payment/cancel')
             ];
 
-            $pensopayCheckoutHelper->getCoreSession()->setPaymentData(json_encode($paymentData));
+            $pensopayCheckoutHelper->getCoreSession()->setPaymentData(Mage::helper('core')->jsonEncode($paymentData));
 //            $this->_redirect('*/*/iframe');
             $this->_redirect('*/*/embedded');
         } else {
@@ -187,7 +187,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
     public function callbackAction()
     {
         $requestBody = $this->getRequest()->getRawBody();
-        $request = json_decode($requestBody);
+        $request = Mage::helper('core')->jsonDecode($requestBody, false);
 
         $checksum = hash_hmac("sha256", $requestBody, $this->getPrivateKey());
 
@@ -216,7 +216,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                         }
                     }
 
-                    $this->getResponse()->setBody(json_encode([
+                    $this->getResponse()->setBody(Mage::helper('core')->jsonEncode([
                         'error' => 'Attempted to pay with test card but testmode is disabled',
                     ]));
 
@@ -295,7 +295,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
         if ($payment->getId()) {
             try {
                 if ($payment->getState() === PensoPay_Payment_Model_Payment::STATE_REJECTED) { //Check if cancelled from iframe first
-                    $this->getResponse()->setBody(json_encode(
+                    $this->getResponse()->setBody(Mage::helper('core')->jsonEncode(
                         [
                             'repeat' => 0,
                             'error' => 1,
@@ -313,7 +313,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                         PensoPay_Payment_Model_Payment::OPERATION_CAPTURE])
                 ) {
                     if ($payment->getLastCode() == PensoPay_Payment_Model_Payment::STATUS_APPROVED) {
-                        $this->getResponse()->setBody(json_encode(
+                        $this->getResponse()->setBody(Mage::helper('core')->jsonEncode(
                             [
                                 'repeat' => 0,
                                 'error' => 0,
@@ -323,7 +323,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                         ));
                     } else {
                         Mage::getSingleton('checkout/session')->addError($this->__('There was a problem with the payment. Please try again.'));
-                        $this->getResponse()->setBody(json_encode(
+                        $this->getResponse()->setBody(Mage::helper('core')->jsonEncode(
                             [
                                 'repeat' => 0,
                                 'error' => 1,
@@ -335,7 +335,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                     return;
                 }
 
-                $this->getResponse()->setBody(json_encode(
+                $this->getResponse()->setBody(Mage::helper('core')->jsonEncode(
                     [
                         'repeat' => 1,
                         'error' => 0,
@@ -346,7 +346,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
             } catch (Exception $e) {}
             return;
         }
-        $this->getResponse()->setBody(json_encode(
+        $this->getResponse()->setBody(Mage::helper('core')->jsonEncode(
             [
                 'repeat' => 0,
                 'error' => 1,

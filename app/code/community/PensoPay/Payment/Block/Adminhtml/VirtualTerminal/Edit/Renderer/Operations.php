@@ -8,7 +8,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Renderer_Operations 
         $helper = Mage::helper('pensopay');
 
         $value = $this->getValue();
-        $operationsArray = json_decode($value, true);
+        $operationsArray = Mage::helper('core')->jsonDecode($value);
 
         if (!empty($operationsArray)) {
             $html = '<table class="operations">';

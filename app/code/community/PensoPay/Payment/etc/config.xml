@@ -54,7 +54,7 @@
             <pensopay_payment_setup>
                 <setup>
                     <module>PensoPay_Payment</module>
-                    <class>Mage_Eav_Model_Entity_Setup</class>
+                    <class>Mage_Core_Model_Resource_Setup</class>
                 </setup>
                 <connection>
                     <use>core_setup</use>

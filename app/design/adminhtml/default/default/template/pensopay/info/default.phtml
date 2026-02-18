@@ -19,7 +19,7 @@ if (!is_null($payment)): ?>
                     <td><?= $this->__('Card Type:') ?></td>
                     <?php
                         $cardImagePath = sprintf('images/pensopaypayment/%s.png', $metadata['brand']);
-                        $cardImageUrl = $this->getSkinUrl($cardImagePath, array('_area' => 'frontend'));
+                        $cardImageUrl = $this->getSkinUrl($cardImagePath, ['_area' => 'frontend']);
                     ?>
                     <td>
                         <img src="<?= $cardImageUrl; ?>" width="40" alt="<?= $metadata['brand']; ?>" />
