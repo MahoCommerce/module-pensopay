@@ -1,6 +1,5 @@
 {
     "name": "mahocommerce/module-pensopay",
     "description": "PensoPay/QuickPay payment integration for Maho Commerce",
-    "license": "OSL-3.0",
     "type": "maho-module"
 }
