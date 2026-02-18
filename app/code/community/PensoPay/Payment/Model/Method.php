@@ -78,12 +78,12 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
     }
 
     /**
-     * @param Varien_Object $payment
+     * @param \Maho\DataObject $payment
      * @param float $amount
      * @return $this|Mage_Payment_Model_Abstract
      * @throws Exception
      */
-    public function capture(Varien_Object $payment, $amount)
+    public function capture(\Maho\DataObject $payment, $amount)
     {
         if ($payment->getInfoInstance()) {
             $order = $payment->getInfoInstance()->getOrder();
@@ -122,7 +122,7 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
             $payment->save();
             $order->save();
 
-            if (!is_null($e))
+            if (isset($e))
                 throw $e; //rethrow it
         }
 
@@ -130,12 +130,12 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
     }
 
     /**
-     * @param Varien_Object $payment
+     * @param \Maho\DataObject $payment
      * @param float $amount
      * @return $this|Mage_Payment_Model_Abstract
      * @throws Exception
      */
-    public function refund(Varien_Object $payment, $amount)
+    public function refund(\Maho\DataObject $payment, $amount)
     {
         /** @var Mage_Sales_Model_Order $order */
         $order = $payment->getOrder();
@@ -170,7 +170,7 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
             $payment->save();
             $order->save();
 
-            if (!is_null($e))
+            if (isset($e))
                 throw $e; //rethrow it
         }
 
@@ -233,6 +233,6 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
      */
     public function getOrderPlaceRedirectUrl()
     {
-        return Mage::getUrl('pensopay/payment/redirect', array('_secure' => true));
+        return Mage::getUrl('pensopay/payment/redirect', ['_secure' => true]);
     }
 }

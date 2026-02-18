@@ -8,11 +8,11 @@ class PensoPay_Payment_Block_Adminhtml_Virtualterminal extends Mage_Adminhtml_Bl
         $this->_removeButton('add');
 
         $this->_addButtonLabel = $this->__('Create Payment');
-        $this->_addButton('edit', array(
+        $this->_addButton('edit', [
             'label'     => $this->getAddButtonLabel(),
             'onclick'   => 'setLocation(\'' . $this->getCreateUrl() .'\')',
             'class'     => 'add',
-        ));
+        ]);
     }
 
     public function getCreateUrl()

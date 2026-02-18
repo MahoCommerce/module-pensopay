@@ -105,7 +105,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                 'cancelurl' => Mage::app()->getStore()->getUrl('pensopay/payment/cancel')
             ];
 
-            $pensopayCheckoutHelper->getCoreSession()->setPaymentData(serialize($paymentData));
+            $pensopayCheckoutHelper->getCoreSession()->setPaymentData(json_encode($paymentData));
 //            $this->_redirect('*/*/iframe');
             $this->_redirect('*/*/embedded');
         } else {
@@ -228,7 +228,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                     $items = $this->_getProductsQty($quote->getAllItems());
                     $itemsForReindex = Mage::getSingleton('cataloginventory/stock')->registerProductsSale($items);
 
-                    $productIds = array();
+                    $productIds = [];
 
                     foreach ($itemsForReindex as $item) {
                         $item->save();
@@ -413,7 +413,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
 
     protected function _getProductsQty($relatedItems)
     {
-        $items = array();
+        $items = [];
         foreach ($relatedItems as $item) {
             $productId  = $item->getProductId();
             if (!$productId) {
@@ -443,10 +443,10 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
             if ($quoteItem->getProduct()) {
                 $stockItem = $quoteItem->getProduct()->getStockItem();
             }
-            $items[$productId] = array(
+            $items[$productId] = [
                 'item' => $stockItem,
                 'qty'  => $quoteItem->getTotalQty()
-            );
+            ];
         }
     }
 
@@ -485,11 +485,11 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                     'firstname' => $billingName['firstname'],
                     'lastname' => $billingName['lastname'],
                     'street' => implode(' ', $billingStreet),
-                    'city' => $billingAddress->city ? $billingAddress->city : '-',
+                    'city' => $billingAddress->city ?: '-',
                     'country_id' => $countryCode,
                     'region' => $billingAddress->region,
-                    'postcode' => $billingAddress->zip_code ? $billingAddress->zip_code : '-',
-                    'telephone' => $billingAddress->phone_number ? $billingAddress->phone_number : '-',
+                    'postcode' => $billingAddress->zip_code ?: '-',
+                    'telephone' => $billingAddress->phone_number ?: '-',
                     'vat_id' => $billingAddress->vat_no,
                     'save_in_address_book' => 0
                 ]
@@ -505,11 +505,11 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                 'firstname' => $shippingName['firstname'],
                 'lastname' => $shippingName['lastname'],
                 'street' => implode(' ', $shippingStreet),
-                'city' => $shippingAddress->city ? $shippingAddress->city : '-',
+                'city' => $shippingAddress->city ?: '-',
                 'country_id' => $countryCode,
                 'region' => $shippingAddress->region,
-                'postcode' => $shippingAddress->zip_code ? $shippingAddress->zip_code : '-',
-                'telephone' => $shippingAddress->phone_number ? $shippingAddress->phone_number : '-',
+                'postcode' => $shippingAddress->zip_code ?: '-',
+                'telephone' => $shippingAddress->phone_number ?: '-',
                 'vat_id' => $shippingAddress->vat_no,
                 'save_in_address_book' => 0
             ]);
@@ -531,18 +531,14 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
     public function splitCustomerName($name)
     {
         $name = trim($name);
-        if (strpos($name, ' ') === false) {
-            // you can return the firstname with no last name
-            return array('firstname' => $name, 'lastname' => '');
-
-            // or you could also throw an exception
-            throw Exception('Invalid name specified.');
+        if (!str_contains($name, ' ')) {
+            return ['firstname' => $name, 'lastname' => ''];
         }
 
         $parts     = explode(" ", $name);
         $lastname  = array_pop($parts);
         $firstname = implode(" ", $parts);
 
-        return array('firstname' => $firstname, 'lastname' => $lastname);
+        return ['firstname' => $firstname, 'lastname' => $lastname];
     }
 }

@@ -67,7 +67,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
             $quote->getShippingAddress()->setPaymentMethod('pensopay_mobilepay');
         }
 
-        $data = array();
+        $data = [];
         $data['method'] = 'pensopay_mobilepay';
         $data['checks'] = Mage_Payment_Model_Method_Abstract::CHECK_USE_CHECKOUT
                           | Mage_Payment_Model_Method_Abstract::CHECK_USE_FOR_COUNTRY
@@ -88,7 +88,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
      */
     public function saveShippingMethod(Mage_Sales_Model_Quote $quote, $shippingMethod = null)
     {
-        if (is_null($shippingMethod)) {
+        if ($shippingMethod === null) {
             $shippingMethod = Mage::getStoreConfig('payment/pensopay_mobilepay/default_shipping_method');
         }
 
@@ -117,18 +117,18 @@ class PensoPay_Payment_Model_Type_Mobilepay
         $invoiceAddress = $request->invoice_address;
         $nameParts = explode(' ', $invoiceAddress->name);
 
-        $data = array(
+        $data = [
             'firstname' => array_shift($nameParts),
             'lastname' => join(' ', $nameParts),
             'email' => $invoiceAddress->email,
-            'street' => array(
+            'street' => [
                 $invoiceAddress->street . " " . $invoiceAddress->house_number . $invoiceAddress->house_extension
-            ),
+            ],
             'city' => $invoiceAddress->city,
             'postcode' => $invoiceAddress->zip_code,
             'country_id' => $invoiceAddress->country_code,
             'telephone' => $invoiceAddress->phone_number,
-        );
+        ];
 
         //Set company if available
         if (isset($invoiceAddress->company_name)) {
@@ -157,7 +157,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
         //unset billing address attributes which were not shown in form
         foreach ($addressForm->getAttributes() as $attribute) {
             if (!isset($data[$attribute->getAttributeCode()])) {
-                $address->setData($attribute->getAttributeCode(), NULL);
+                $address->setData($attribute->getAttributeCode(), null);
             }
         }
 
@@ -168,7 +168,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
 
         // validate billing address
         if (($validateRes = $address->validate()) !== true) {
-            return array('error' => 1, 'message' => $validateRes);
+            return ['error' => 1, 'message' => $validateRes];
         }
 
         $address->implodeStreetAddress();
@@ -196,7 +196,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
                     $shippingMethod = $shipping->getShippingMethod();
 
                     // Billing address properties that must be always copied to shipping address
-                    $requiredBillingAttributes = array('customer_address_id');
+                    $requiredBillingAttributes = ['customer_address_id'];
 
                     // don't reset original shipping data, if it was not changed by customer
                     foreach ($shipping->getData() as $shippingKey => $shippingValue) {
@@ -230,17 +230,17 @@ class PensoPay_Payment_Model_Type_Mobilepay
         $invoiceAddress = $request->invoice_address;
         $nameParts = explode(' ', $shippingAddress->name);
 
-        $data = array(
+        $data = [
             'firstname' => array_shift($nameParts),
             'lastname' => join(' ', $nameParts),
             'email' => $shippingAddress->email,
-            'street' => array(
+            'street' => [
                 $shippingAddress->street . " " . $shippingAddress->house_number . $shippingAddress->house_extension
-            ),
+            ],
             'city' => $shippingAddress->city,
             'postcode' => $shippingAddress->zip_code,
             'country_id' => $shippingAddress->country_code,
-        );
+        ];
 
         //Set telephone
         if (!empty($shippingAddress->phone_number)) {
@@ -275,7 +275,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
         // unset shipping address attributes which were not shown in form
         foreach ($addressForm->getAttributes() as $attribute) {
             if (!isset($data[$attribute->getAttributeCode()])) {
-                $address->setData($attribute->getAttributeCode(), NULL);
+                $address->setData($attribute->getAttributeCode(), null);
             }
         }
 
@@ -317,10 +317,10 @@ class PensoPay_Payment_Model_Type_Mobilepay
         $customerErrors = $customerForm->validateData($customerData);
 
         if ($customerErrors !== true) {
-            return array(
+            return [
                 'error'     => -1,
                 'message'   => implode(', ', $customerErrors)
-            );
+            ];
         }
 
         if ($quote->getCustomerId()) {
@@ -339,10 +339,10 @@ class PensoPay_Payment_Model_Type_Mobilepay
 
         $result = $customer->validate();
         if (true !== $result && is_array($result)) {
-            return array(
+            return [
                 'error'   => -1,
                 'message' => implode(', ', $result)
-            );
+            ];
         }
 
         // copy customer/guest email to address

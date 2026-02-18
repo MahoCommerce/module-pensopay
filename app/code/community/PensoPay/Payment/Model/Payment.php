@@ -29,7 +29,7 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract {
     const FRAUD_PROBABILITY_HIGH = 'high';
     const FRAUD_PROBABILITY_NONE = 'none';
 
-    protected $_lastOperation = array();
+    protected $_lastOperation = [];
 
     const STATUS_CODES =
     [

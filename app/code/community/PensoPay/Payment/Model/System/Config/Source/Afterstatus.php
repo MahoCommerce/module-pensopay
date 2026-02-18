@@ -3,11 +3,11 @@
 class PensoPay_Payment_Model_System_Config_Source_Afterstatus
 {
     // set null to enable all possible
-    protected $_stateStatuses = array(
+    protected $_stateStatuses = [
         Mage_Sales_Model_Order::STATE_NEW,
         Mage_Sales_Model_Order::STATE_PROCESSING,
         Mage_Sales_Model_Order::STATE_HOLDED,
-    );
+    ];
 
     public function toOptionArray()
     {
@@ -17,16 +17,16 @@ class PensoPay_Payment_Model_System_Config_Source_Afterstatus
         else {
             $statuses = Mage::getSingleton('sales/order_config')->getStatuses();
         }
-        $options = array();
-        $options[] = array(
+        $options = [];
+        $options[] = [
             'value' => '',
             'label' => Mage::helper('adminhtml')->__('-- Please Select --')
-        );
+        ];
         foreach ($statuses as $code=>$label) {
-            $options[] = array(
+            $options[] = [
                 'value' => $code,
                 'label' => $label
-            );
+            ];
         }
         return $options;
     }

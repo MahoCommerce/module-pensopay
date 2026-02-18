@@ -235,7 +235,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
             $this->_getSession()->addError($e->getMessage());
         }
 
-        return $this->_redirect('*/*/edit', array('id' => $paymentModel->getId()));
+        return $this->_redirect('*/*/edit', ['id' => $paymentModel->getId()]);
     }
 
     protected function _getPayment()
@@ -270,7 +270,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         $paymentModel = $this->_getPayment();
         if ($paymentModel) {
             try {
-                if (in_array($action, array('capture', 'refund'))) {
+                if (in_array($action, ['capture', 'refund'])) {
                     $payment = $api->{$action}($paymentModel->getReferenceId(), $paymentModel->getAmount());
                 } else {
                     $payment = $api->{$action}($paymentModel->getReferenceId());
@@ -320,7 +320,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         if (!empty($ids)) {
             /** @var PensoPay_Payment_Model_Resource_Payment_Collection $paymentCollection */
             $paymentCollection = Mage::getResourceModel('pensopay/payment_collection');
-            $paymentCollection->addFieldToFilter('id', array('in' => $ids));
+            $paymentCollection->addFieldToFilter('id', ['in' => $ids]);
 
             $this->_redirect = false;
 
@@ -361,7 +361,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
      */
     public function orderMassCaptureAction()
     {
-        $orderIds = $this->getRequest()->getPost('order_ids', array());
+        $orderIds = $this->getRequest()->getPost('order_ids', []);
 
         foreach ($orderIds as $orderId) {
             /** @var Mage_Sales_Model_Order $order */

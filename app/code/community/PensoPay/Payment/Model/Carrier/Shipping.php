@@ -29,9 +29,9 @@ class PensoPay_Payment_Model_Carrier_Shipping
      */
     public function getAllowedMethods()
     {
-        return array(
+        return [
             $this->_code => $this->getConfigData('name'),
-        );
+        ];
     }
 
     /**

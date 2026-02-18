@@ -5,10 +5,10 @@ class PensoPay_Payment_Block_Adminhtml_System_Config_Form_Field_Version extends 
     /**
      * Render field
      *
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @return string
      */
-    public function render(Varien_Data_Form_Element_Abstract $element)
+    public function render(\Maho\Data\Form\Element\AbstractElement $element)
     {
         //Hide scope checkbox and label
         $element->setCanUseWebsiteValue(0);
@@ -21,10 +21,10 @@ class PensoPay_Payment_Block_Adminhtml_System_Config_Form_Field_Version extends 
     /**
      * Get extension version
      *
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @return string
      */
-    protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
+    protected function _getElementHtml(\Maho\Data\Form\Element\AbstractElement $element)
     {
         $installedVersion = Mage::getConfig()->getNode()->modules->PensoPay_Payment->version;
 

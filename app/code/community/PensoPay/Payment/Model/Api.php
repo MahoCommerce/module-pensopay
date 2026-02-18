@@ -81,13 +81,13 @@ class PensoPay_Payment_Model_Api
             //Add order items to basket array
             /** @var Mage_Sales_Model_Order_Item $item */
             foreach ($order->getAllVisibleItems() as $item) {
-                $product = array(
+                $product = [
                     'qty'        => (int) $item->getQtyOrdered(),
                     'item_no'    => $item->getSku(),
                     'item_name'  => $item->getName(),
                     'item_price' => (int) (($item->getPriceInclTax() - $item->getDiscountAmount()) * 100),
                     'vat_rate'   => $item->getTaxPercent() / 100,
-                );
+                ];
 
                 $basket[] = $product;
             }
@@ -104,15 +104,15 @@ class PensoPay_Payment_Model_Api
 
             $request->setShipping($shipping);
         } else { //Order is from virtual terminal
-            $basket = array(
-                array(
+            $basket = [
+                [
                     'qty'        => 1,
                     'item_no'    => 'virtualterminal',
                     'item_name'  => 'Products',
                     'item_price' => $order->getGrandTotal(),
                     'vat_rate'   => 0.25, //TODO
-                )
-            );
+                ]
+            ];
         }
 
         $request->setBasket($basket);
@@ -124,11 +124,10 @@ class PensoPay_Payment_Model_Api
      * @param Mage_Sales_Model_Order $order
      * @return mixed
      * @throws Mage_Core_Exception
-     * @throws Zend_Http_Client_Exception
      */
     public function createPayment(Mage_Sales_Model_Order $order)
     {
-        $request = new Varien_Object();
+        $request = new \Maho\DataObject();
 
         $this->_setupRequest($request, $order);
 
@@ -148,11 +147,10 @@ class PensoPay_Payment_Model_Api
      * @param Mage_Sales_Model_Order $order
      * @return mixed
      * @throws Mage_Core_Exception
-     * @throws Zend_Http_Client_Exception
      */
     public function updatePayment(Mage_Sales_Model_Order $order)
     {
-        $request = new Varien_Object();
+        $request = new \Maho\DataObject();
 
         $this->_setupRequest($request, $order);
 
@@ -164,28 +162,28 @@ class PensoPay_Payment_Model_Api
 
         //Update payment via API
         $endpoint = sprintf('payments/%s', $order->getReferenceId());
-        $payment = $this->request($endpoint, $request->toArray(), Zend_Http_Client::PATCH, [200]);
+        $payment = $this->request($endpoint, $request->toArray(), 'PATCH', [200]);
 
         return json_decode($payment);
     }
 
     public function cancel($paymentId)
     {
-        $request = new Varien_Object();
+        $request = new \Maho\DataObject();
         $request->setId($paymentId);
 
         Mage::dispatchEvent('pensopay_cancel_payment_before', ['request' => $request]);
 
         //Update payment via API
         $endpoint = sprintf('payments/%s/cancel?synchronized', $paymentId);
-        $payment = $this->request($endpoint, $request->toArray(), Zend_Http_Client::POST, [200, 202]);
+        $payment = $this->request($endpoint, $request->toArray(), 'POST', [200, 202]);
 
         return json_decode($payment);
     }
 
     public function refund($paymentId, $amount)
     {
-        $request = new Varien_Object();
+        $request = new \Maho\DataObject();
         $request->setId($paymentId);
         $request->setAmount($amount * 100);
 
@@ -193,7 +191,7 @@ class PensoPay_Payment_Model_Api
 
         //Update payment via API
         $endpoint = sprintf('payments/%s/refund?synchronized', $paymentId);
-        $payment = $this->request($endpoint, $request->toArray(), Zend_Http_Client::POST);
+        $payment = $this->request($endpoint, $request->toArray(), 'POST');
 
         return json_decode($payment);
     }
@@ -205,13 +203,12 @@ class PensoPay_Payment_Model_Api
      * @param $paymentId
      * @return mixed
      * @throws Mage_Core_Exception
-     * @throws Zend_Http_Client_Exception
      */
     public function createPaymentLink(Mage_Sales_Model_Order $order, $paymentId, $address = false)
     {
         Mage::log($paymentId, null, PensoPay_Payment_Helper_Data::LOG_FILENAME);
 
-        $request = new Varien_Object();
+        $request = new \Maho\DataObject();
         $request->setAgreementId(Mage::getStoreConfig(PensoPay_Payment_Model_Config::XML_PATH_AGREEMENT_ID, $order->getStore()));
 
         if ($order->getIsVirtualTerminal()) {
@@ -276,7 +273,7 @@ class PensoPay_Payment_Model_Api
         }
 
         $endpoint = sprintf('payments/%s/link', $paymentId);
-        $link = $this->request($endpoint, $request->toArray(), Zend_Http_Client::PUT);
+        $link = $this->request($endpoint, $request->toArray(), 'PUT');
 
         Mage::log(var_export($link, true), null, 'request.log');
         return json_decode($link)->url;
@@ -288,24 +285,23 @@ class PensoPay_Payment_Model_Api
      * @param $paymentId
      * @return mixed
      * @throws Mage_Core_Exception
-     * @throws Zend_Http_Client_Exception
      */
     public function deletePaymentLink($paymentId)
     {
         Mage::log('Deleting payment link for ' . $paymentId, null, PensoPay_Payment_Helper_Data::LOG_FILENAME);
 
-        $request = new Varien_Object();
+        $request = new \Maho\DataObject();
         $request->setAgreementId(Mage::getStoreConfig(PensoPay_Payment_Model_Config::XML_PATH_AGREEMENT_ID));
 
         $endpoint = sprintf('payments/%s/link', $paymentId);
-        $link = $this->request($endpoint, $request->toArray(), Zend_Http_Client::DELETE, [204]); //No content returned for this
+        $link = $this->request($endpoint, $request->toArray(), 'DELETE', [204]); //No content returned for this
 
         return json_decode($link)->url;
     }
 
     public function capture($paymentId, $amount)
     {
-        $request = new Varien_Object();
+        $request = new \Maho\DataObject();
         $request->setId($paymentId);
         $request->setAmount($amount * 100);
 
@@ -313,7 +309,7 @@ class PensoPay_Payment_Model_Api
 
         //Update payment via API
         $endpoint = sprintf('payments/%s/capture?synchronized', $paymentId);
-        $payment = $this->request($endpoint, $request->toArray(), Zend_Http_Client::POST);
+        $payment = $this->request($endpoint, $request->toArray(), 'POST');
 
         return json_decode($payment);
     }
@@ -322,11 +318,11 @@ class PensoPay_Payment_Model_Api
     {
         Mage::log('Updating payment state for ' . $paymentId, null, PensoPay_Payment_Helper_Data::LOG_FILENAME);
 
-        $request = new Varien_Object();
+        $request = new \Maho\DataObject();
         $request->setAgreementId(Mage::getStoreConfig(PensoPay_Payment_Model_Config::XML_PATH_AGREEMENT_ID, $store));
 
         $endpoint = sprintf('payments/%s', $paymentId);
-        $payment = $this->request($endpoint, $request->toArray(), Zend_Http_Client::GET);
+        $payment = $this->request($endpoint, $request->toArray(), 'GET');
 
         return json_decode($payment);
     }
@@ -340,36 +336,32 @@ class PensoPay_Payment_Model_Api
      * @param array $expectedResponseCodes
      * @return string
      * @throws Mage_Core_Exception
-     * @throws Zend_Http_Client_Exception
      */
-    protected function request($resource, $data = [], $method = Zend_Http_Client::POST, $expectedResponseCodes = [200, 201, 202])
+    protected function request($resource, $data = [], $method = 'POST', $expectedResponseCodes = [200, 201, 202])
     {
-        $client = new Zend_Http_Client();
-
+        $client = \Symfony\Component\HttpClient\HttpClient::create();
         $url = $this->baseurl . '/' . $resource;
+        $body = json_encode($data);
 
-        $client->setUri($url);
+        $response = $client->request($method, $url, [
+            'headers' => [
+                'Authorization'  => 'Basic ' . base64_encode(':' . $this->getApiKey()),
+                'Accept-Version' => 'v10',
+                'Accept'         => 'application/json',
+                'Content-Type'   => 'application/json',
+                'Content-Length' => strlen($body),
+            ],
+            'body' => $body,
+        ]);
 
-        $headers = [
-            'Authorization'  => 'Basic ' . base64_encode(':' . $this->getApiKey()),
-            'Accept-Version' => 'v10',
-            'Accept'         => 'application/json',
-            'Content-Type'   => 'application/json',
-            'Content-Length' => strlen(json_encode($data))
-        ];
-
-        $client->setHeaders($headers);
-        $client->setMethod($method);
-        $client->setRawData(json_encode($data));
-
-        $request = $client->request();
-
-        if (! in_array($request->getStatus(), $expectedResponseCodes)) {
-            Mage::log($request->getBody(), null, PensoPay_Payment_Helper_Data::LOG_FILENAME);
-            Mage::throwException($request->getBody());
+        $statusCode = $response->getStatusCode();
+        if (!in_array($statusCode, $expectedResponseCodes)) {
+            $responseBody = $response->getContent(false);
+            Mage::log($responseBody, null, PensoPay_Payment_Helper_Data::LOG_FILENAME);
+            Mage::throwException($responseBody);
         }
 
-        return $request->getBody();
+        return $response->getContent(false);
     }
 
     /**
@@ -393,10 +385,10 @@ class PensoPay_Payment_Model_Api
      */
     private function getLanguageFromLocale($locale)
     {
-        $languageMap = array(
+        $languageMap = [
             'nb' => 'no',
             'nn' => 'no'
-        );
+        ];
 
         $parts = explode('_', $locale);
         $language = $parts[0];

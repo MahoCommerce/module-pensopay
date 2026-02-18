@@ -19,13 +19,13 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
         if (!$this->_objId) {
             $saveAndSendUrl = $this->getUrl('*/*/saveAndSend');
             $payNowUrl = $this->getUrl('*/*/saveAndPay');
-            $this->_addButton('saveAndSend', array(
+            $this->_addButton('saveAndSend', [
                 'label'     => $this->__('Send Payment Link'),
                 'onclick'   => sprintf("
                         $('customer_email').classList.add('required-entry');
                         editForm.submit('%s');", $saveAndSendUrl),
                 'class'     => 'save',
-            ), 1);
+            ], 1);
 
             /**
              * Onclick explanation
@@ -34,7 +34,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
              * Then it removes the required-entry for the email since Pay Now does not require it.
              * Then submits.
              */
-            $this->_addButton('saveAndPay', array(
+            $this->_addButton('saveAndPay', [
                 'label'     => $this->__('Pay Now'),
                 'onclick'   => sprintf("
                         var emElem = $('advice-required-entry-customer_email');
@@ -42,21 +42,21 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
                         $('customer_email').classList.remove('required-entry');
                         editForm.submit('%s');", $payNowUrl),
                 'class'     => 'save',
-            ), 2);
+            ], 2);
         } else { //Updating payment
             $updateAndSend = $this->getUrl('*/*/updateAndSend');
             $updateAndPay = $this->getUrl('*/*/updateAndPay');
-            $cancelUrl = $this->getUrl('*/*/cancelPayment', array('id' => $this->_objId));
-            $captureUrl = $this->getUrl('*/*/capturePayment', array('id' => $this->_objId));
-            $refundUrl = $this->getUrl('*/*/refundPayment', array('id' => $this->_objId));
-            $updateStatusUrl = $this->getUrl('*/*/updatePaymentStatus', array('id' => $this->_objId));
+            $cancelUrl = $this->getUrl('*/*/cancelPayment', ['id' => $this->_objId]);
+            $captureUrl = $this->getUrl('*/*/capturePayment', ['id' => $this->_objId]);
+            $refundUrl = $this->getUrl('*/*/refundPayment', ['id' => $this->_objId]);
+            $updateStatusUrl = $this->getUrl('*/*/updatePaymentStatus', ['id' => $this->_objId]);
 
-            $this->_addButton('updateStatus', array(
+            $this->_addButton('updateStatus', [
                 'label' => $this->__('Get Payment Status'),
                 'onclick' => sprintf("
                         editForm.submit('%s');", $updateStatusUrl),
                 'class' => 'save',
-            ), 1, 0);
+            ], 1, 0);
 
             /**
              * We could be doing a check for order validity here, but we're doing this on the controller
@@ -65,7 +65,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
             /** @var PensoPay_Payment_Model_Payment $payment */
             $payment = Mage::getModel('pensopay/payment')->load($this->_objId);
             if ($payment->canCancel()) {
-                $this->_addButton('cancel', array(
+                $this->_addButton('cancel', [
                     'label' => $this->__('Cancel'),
                     'class' => 'delete',
                     'onclick' => 'deleteConfirm(\''
@@ -75,11 +75,11 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
                         . '\', \''
                         . $cancelUrl
                         . '\')',
-                ), 1, 4);
+                ], 1, 4);
             }
 
             if ($payment->canCapture()) {
-                $this->_addButton('Capture', array(
+                $this->_addButton('Capture', [
                     'label' => $this->__('Capture'),
                     'class' => 'save',
                     'onclick' => 'deleteConfirm(\''
@@ -89,11 +89,11 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
                         . '\', \''
                         . $captureUrl
                         . '\')',
-                ), 1, 5);
+                ], 1, 5);
             }
 
             if ($payment->canRefund()) {
-                $this->_addButton('Refund', array(
+                $this->_addButton('Refund', [
                     'label' => $this->__('Refund'),
                     'class' => 'cancel',
                     'onclick' => 'deleteConfirm(\''
@@ -103,17 +103,17 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
                         . '\', \''
                         . $refundUrl
                         . '\')',
-                ), 1, 6);
+                ], 1, 6);
             }
 
             if ($payment->getState() === PensoPay_Payment_Model_Payment::STATE_INITIAL) {
-                $this->_addButton('updateAndSend', array(
+                $this->_addButton('updateAndSend', [
                     'label' => $this->__('Update Payment and Send Link'),
                     'onclick' => sprintf("
                         $('customer_email').classList.add('required-entry');
                         editForm.submit('%s');", $updateAndSend),
                     'class' => 'save',
-                ), 1, 7);
+                ], 1, 7);
 
                 /**
                  * Onclick explanation
@@ -122,7 +122,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
                  * Then it removes the required-entry for the email since Pay Now does not require it.
                  * Then submits.
                  */
-                $this->_addButton('updateAndPay', array(
+                $this->_addButton('updateAndPay', [
                     'label' => $this->__('Update & Pay Now'),
                     'onclick' => sprintf("
                         var emElem = $('advice-required-entry-customer_email');
@@ -130,7 +130,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
                         $('customer_email').classList.remove('required-entry');
                         editForm.submit('%s');", $updateAndPay),
                     'class' => 'save',
-                ), 1, 8);
+                ], 1, 8);
             }
         }
     }

@@ -29,99 +29,99 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Grid extends Mage_Adminht
         /** @var Mage_Adminhtml_Block_Widget_Grid_Massaction_Abstract $massActionBlock */
         $massActionBlock = $this->getMassactionBlock();
         $massActionBlock->setFormFieldName('id');
-        $massActionBlock->addItem('capture', array(
+        $massActionBlock->addItem('capture', [
             'label'=> $helper->__('Capture'),
-            'url'  => $this->getUrl('*/*/massCapture', array('' => '')),
+            'url'  => $this->getUrl('*/*/massCapture', ['' => '']),
             'confirm' => $helper->__('Are you sure?')
-        ));
-        $massActionBlock->addItem('refund', array(
+        ]);
+        $massActionBlock->addItem('refund', [
             'label'=> $helper->__('Refund'),
-            'url'  => $this->getUrl('*/*/massRefund', array('' => '')),
+            'url'  => $this->getUrl('*/*/massRefund', ['' => '']),
             'confirm' => $helper->__('Are you sure?')
-        ));
-        $massActionBlock->addItem('cancel', array(
+        ]);
+        $massActionBlock->addItem('cancel', [
             'label'=> $helper->__('Cancel'),
-            'url'  => $this->getUrl('*/*/massCancel', array('' => '')),
+            'url'  => $this->getUrl('*/*/massCancel', ['' => '']),
             'confirm' => $helper->__('Are you sure?')
-        ));
+        ]);
         return parent::_prepareMassaction();
     }
 
     protected function _prepareColumns()
     {
-        $this->addColumn('id', array(
+        $this->addColumn('id', [
             'header' => $this->__('ID'),
             'align' => 'center',
             'width' => '10px',
             'index' => 'id'
-        ));
+        ]);
 
-        $this->addColumn('order_id', array(
+        $this->addColumn('order_id', [
             'header' => $this->__('Order ID'),
             'align' => 'center',
             'width' => '50px',
             'index' => 'order_id'
-        ));
+        ]);
 
-        $this->addColumn('amount', array(
+        $this->addColumn('amount', [
             'header' => $this->__('Amount'),
             'align' => 'center',
             'index' => 'amount',
             'width' => '50px',
             'renderer'  => 'PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Renderer_Grid_Amount',
-        ));
+        ]);
 
-        $this->addColumn('customer_name', array(
+        $this->addColumn('customer_name', [
             'header' => $this->__('Customer Name'),
             'align' => 'center',
             'width' => '100px',
             'index' => 'customer_name'
-        ));
+        ]);
 
-        $this->addColumn('customer_email', array(
+        $this->addColumn('customer_email', [
             'header' => $this->__('Customer Email'),
             'align' => 'center',
             'width' => '100px',
             'index' => 'customer_email'
-        ));
+        ]);
 
-        $this->addColumn('state', array(
+        $this->addColumn('state', [
             'header' => $this->__('State'),
             'align' => 'center',
             'width' => '50px',
             'index' => 'state',
             'renderer'  => 'PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Renderer_Grid_Status',
-        ));
+        ]);
 
-        $this->addColumn('created_at', array(
+        $this->addColumn('created_at', [
             'index' => 'created_at',
             'align' => 'center',
             'type' => 'datetime',
             'header' => $this->__('Created At'),
             'width' => '250px'
-        ));
+        ]);
 
-        $this->addColumn('updated_at', array(
+        $this->addColumn('updated_at', [
             'index' => 'updated_at',
             'align' => 'center',
             'type' => 'datetime',
             'header' => $this->__("Updated At"),
             'width' => '250px'
-        ));
+        ]);
 
-        $this->addColumn('link', array(
+        $this->addColumn('link', [
             'index' => 'link',
             'align' => 'center',
             'width' => '20px',
             'header' => $this->__('Payment Link'),
             'renderer'  => 'PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Renderer_Grid_Link'
-        ));
+        ]);
 
         return parent::_prepareColumns();
     }
 
     public function getRowUrl($item)
     {
-        return $this->getUrl('*/*/edit', array('id' => $item->getId()));
+        return $this->getUrl('*/*/edit', ['id' => $item->getId()]);
     }
 }

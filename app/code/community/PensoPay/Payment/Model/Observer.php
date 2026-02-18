@@ -5,9 +5,9 @@ class PensoPay_Payment_Model_Observer
     /**
      * Check for feed updates
      *
-     * @param Varien_Event_Observer $observer
+     * @param \Maho\Event\Observer $observer
      */
-    public function controllerActionPredispatch(Varien_Event_Observer $observer)
+    public function controllerActionPredispatch(\Maho\Event\Observer $observer)
     {
         if (Mage::getSingleton('admin/session')->isLoggedIn()) {
             /** @var PensoPay_Payment_Model_Feed $feedModel */
@@ -20,10 +20,10 @@ class PensoPay_Payment_Model_Observer
     /**
      * Add fraud probability to order grid
      *
-     * @param  Varien_Event_Observer $observer
+     * @param  \Maho\Event\Observer $observer
      * @return $this
      */
-    public function onBlockHtmlBefore(Varien_Event_Observer $observer)
+    public function onBlockHtmlBefore(\Maho\Event\Observer $observer)
     {
         $block = $observer->getEvent()->getBlock();
 
@@ -31,19 +31,19 @@ class PensoPay_Payment_Model_Observer
 
         if ($block->getType() === 'adminhtml/sales_order_grid') {
             $massAction = $block->getMassactionBlock();
-            $massAction->addItem('pensopay_mass_capture', array(
+            $massAction->addItem('pensopay_mass_capture', [
                 'label' => 'Capture with PensoPay',
                 'url' => $block->getUrl('adminhtml/pensopay/orderMassCapture')
-            ));
+            ]);
         }
     }
 
     /**
      * Disable stock subtraction if configured to do so
      *
-     * @param Varien_Event_Observer $observer
+     * @param \Maho\Event\Observer $observer
      */
-    public function checkoutTypeOnepageSaveOrder(Varien_Event_Observer $observer)
+    public function checkoutTypeOnepageSaveOrder(\Maho\Event\Observer $observer)
     {
         /** @var Mage_Sales_Model_Quote $quote */
         $quote = $observer->getEvent()->getQuote();
@@ -71,7 +71,7 @@ class PensoPay_Payment_Model_Observer
         return $this;
     }
 
-    public function addViabillPricetag(Varien_Event_Observer $observer)
+    public function addViabillPricetag(\Maho\Event\Observer $observer)
     {
         $block = $observer->getBlock();
         /** @var PensoPay_Payment_Helper_Data $pensopayHelper */
@@ -81,7 +81,7 @@ class PensoPay_Payment_Model_Observer
             /** @var Mage_Core_Model_Layout $layout */
             $layout = Mage::app()->getLayout();
 
-            /** @var Varien_Object $transport */
+            /** @var \Maho\DataObject $transport */
             $transport = $observer->getTransport();
 
             $html = $transport->getHtml();
@@ -117,8 +117,8 @@ class PensoPay_Payment_Model_Observer
     {
         /** @var PensoPay_Payment_Model_Resource_Payment_Collection $collection */
         $collection = Mage::getResourceModel('pensopay/payment_collection');
-        $collection->addFieldToFilter('state', array('nin' => PensoPay_Payment_Model_Payment::FINALIZED_STATES));
-        $collection->addFieldToFilter('reference_id', array('notnull' => true));
+        $collection->addFieldToFilter('state', ['nin' => PensoPay_Payment_Model_Payment::FINALIZED_STATES]);
+        $collection->addFieldToFilter('reference_id', ['notnull' => true]);
         $collection->addFieldToFilter('is_virtualterminal', 1);
 
         /** @var PensoPay_Payment_Model_Payment $payment */
@@ -126,13 +126,13 @@ class PensoPay_Payment_Model_Observer
             try {
                 $payment->updatePaymentRemote();
             } catch (Exception $e) {
-                Mage::log('CRON: Could not update payment remotely. Exception: ' . $e->getMessage(), LOG_WARNING, PensoPay_Payment_Helper_Data::LOG_FILENAME);
+                Mage::log('CRON: Could not update payment remotely. Exception: ' . $e->getMessage(), Mage::LOG_WARNING, PensoPay_Payment_Helper_Data::LOG_FILENAME);
             }
         }
         return $this;
     }
 
-    public function cancelOrderAfter(Varien_Event_Observer $observer)
+    public function cancelOrderAfter(\Maho\Event\Observer $observer)
     {
         /** @var Mage_Sales_Model_Order $order */
         $order = $observer->getEvent()->getOrder();
@@ -171,31 +171,31 @@ class PensoPay_Payment_Model_Observer
         $collection = Mage::getResourceModel('sales/order_collection');
         $collection->addFieldToFilter('state', 'pending_payment');
         $collection->getSelect()->join(
-            array('payments' => $collection->getTable('sales/order_payment')),
+            ['payments' => $collection->getTable('sales/order_payment')],
             'payments.parent_id = main_table.entity_id',
             'method'
         );
-        $collection->addFieldToFilter('method', array('like' => 'pensopay%'));
+        $collection->addFieldToFilter('method', ['like' => 'pensopay%']);
         $collection->getSelect()->where('HOUR(TIMEDIFF(NOW(), created_at)) >= 24');
         /** @var Mage_Sales_Model_Order $payment */
         foreach ($collection as $order) {
             try {
                 if ($order->canCancel()) {
                     $order->cancel()->save();
-                    Mage::log('CRON: Canceled old order #' . $order->getIncrementId(), LOG_WARNING,
+                    Mage::log('CRON: Canceled old order #' . $order->getIncrementId(), Mage::LOG_WARNING,
                         PensoPay_Payment_Helper_Data::LOG_FILENAME);
                 } else {
                     throw new Exception('Order is in a non-cancellable state.');
                 }
             } catch (Exception $e) {
                 Mage::log('CRON: Could not cancel old order #' . $order->getIncrementId() . ' Exception: ' . $e->getMessage(),
-                    LOG_WARNING, PensoPay_Payment_Helper_Data::LOG_FILENAME);
+                    Mage::LOG_WARNING, PensoPay_Payment_Helper_Data::LOG_FILENAME);
             }
         }
         return $this;
     }
 
-    public function checkoutSubmitAllAfter(Varien_Event_Observer $observer)
+    public function checkoutSubmitAllAfter(\Maho\Event\Observer $observer)
     {
         /** @var Mage_Sales_Model_Order $order */
         $order = $observer->getEvent()->getOrder();
@@ -229,7 +229,7 @@ class PensoPay_Payment_Model_Observer
              * to load the quote properly and then send them off to the payment gateway, so he can properly see
              * the success page afterwards.
              */
-            $truePaymentLink = $order->getStore()->getUrl('pensopay/payment/email', array('hash' => $newPayment->getHash()));
+            $truePaymentLink = $order->getStore()->getUrl('pensopay/payment/email', ['hash' => $newPayment->getHash()]);
 
             $helper->sendEmail(
                 $order->getBillingAddress()->getEmail(),
