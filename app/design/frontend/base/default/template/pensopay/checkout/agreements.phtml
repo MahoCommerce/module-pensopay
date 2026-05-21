@@ -25,9 +25,7 @@
  */
 ?>
 <?php
-/**
- * @see Mage_Checkout_Block_Agreements
- */
+/** @var Mage_Checkout_Block_Agreements $this */
 ?>
 
 <?php if (!$this->getAgreements()) return; ?>
@@ -38,7 +36,7 @@
             <?php if ($_a->getIsHtml()):?>
                 <?php echo $_a->getContent() ?>
             <?php else:?>
-                <?php echo nl2br($this->escapeHtml($_a->getContent())) ?>
+                <?= nl2br((string) $this->escapeHtmlAsObject($_a->getContent())) ?>
             <?php endif; ?>
 
             <div class="action">
@@ -46,7 +44,7 @@
             </div>
         </div>
         <p class="agree">
-            <input type="checkbox" id="mobilepay-agreement-<?php echo $_a->getId()?>" name="agreement[<?php echo $_a->getId()?>]" value="1" title="<?php echo $this->escapeHtml($_a->getCheckboxText()) ?>" class="checkbox agreement required-entry" /><a href="#mobilepay-agreement-modal" class="mobilepay-agreement-modal" for="agreement-<?php echo $_a->getId()?>"><?php echo $_a->getIsHtml() ? $_a->getCheckboxText() : $this->escapeHtml($_a->getCheckboxText()) ?></a>
+            <input type="checkbox" id="mobilepay-agreement-<?= $_a->getId()?>" name="agreement[<?= $_a->getId()?>]" value="1" title="<?= $this->escapeHtmlAsObject($_a->getCheckboxText()) ?>" class="checkbox agreement required-entry" /><a href="#mobilepay-agreement-modal" class="mobilepay-agreement-modal" for="agreement-<?= $_a->getId()?>"><?= $_a->getIsHtml() ? $_a->getCheckboxText() : $this->escapeHtmlAsObject($_a->getCheckboxText()) ?></a>
         </p>
     </li>
 <?php endforeach ?>

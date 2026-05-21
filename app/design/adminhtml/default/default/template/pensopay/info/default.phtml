@@ -1,7 +1,7 @@
 <?php
 /** @var PensoPay_Payment_Block_Info $this */
 ?>
-<p><?php echo $this->htmlEscape($this->getMethod()->getTitle()) ?></p>
+<p><?= $this->escapeHtmlAsObject($this->getMethod()->getTitle()) ?></p>
 <?php
 $payment = $this->getPayment();
 if (!is_null($payment)): ?>

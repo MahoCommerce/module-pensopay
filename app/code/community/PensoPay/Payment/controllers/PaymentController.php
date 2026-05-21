@@ -2,17 +2,14 @@
 
 class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Action
 {
-    public function embeddedAction()
+    public function embeddedAction(): void
     {
         $this->loadLayout();
         $this->renderLayout();
     }
 
-    public function emailAction()
+    public function emailAction(): void
     {
-        /** @var Mage_Core_Controller_Request_Http $request */
-        $request = $this->getRequest();
-
         $hash = $this->getRequest()->getParam('hash');
         if (!empty($hash)) {
             /** @var PensoPay_Payment_Model_Payment $payment */
@@ -25,21 +22,22 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                     $checkoutSession = Mage::getSingleton('checkout/session');
                     $checkoutSession->setLastSuccessQuoteId($order->getQuoteId());
                     $checkoutSession->setLastQuoteId($order->getQuoteId());
-                    $checkoutSession->setLastOrderId($order->getId());
-                    return $this->getResponse()->setRedirect($payment->getLink());
+                    $checkoutSession->setLastOrderId((int) $order->getId());
+                    $this->getResponse()->setRedirect($payment->getLink());
+                    return;
                 }
             }
         }
 
         //Non descriptive messages for these things are best, I believe.
         Mage::getSingleton('core/session')->addError($this->__('Error with the link.'));
-        return $this->_redirect('/');
+        $this->_redirect('/');
     }
 
     /**
      * Redirect to gateway
      */
-    public function redirectAction()
+    public function redirectAction(): void
     {
         /** @var PensoPay_Payment_Helper_Checkout $pensopayCheckoutHelper */
         $pensopayCheckoutHelper = Mage::helper('pensopay/checkout');
@@ -51,17 +49,17 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
         $api = Mage::getModel('pensopay/api');
 
         $order = $pensopayCheckoutHelper->getCheckoutSession()->getLastRealOrder();
-        //        $isCheckoutIframe = $pensopayCheckoutHelper->isCheckoutIframe();
-        $isCheckoutIframe = false; //deprecated for now
         $isCheckoutEmbedded = $pensopayCheckoutHelper->isCheckoutEmbedded();
 
         if ($isCheckoutEmbedded) {
-            $paymentMethod = $order->getPayment()->getMethod();
+            $orderPayment = $order->getPayment();
+            $paymentMethod = $orderPayment ? $orderPayment->getMethod() : null;
             if (in_array($paymentMethod, ['pensopay_dankort', 'pensopay_klarna', 'pensopay_mobilepay'], true)) { //These do not support embedded
                 $isCheckoutEmbedded = false;
             }
         }
 
+        $paymentLink = null;
         try {
 
             $payment = $api->createPayment($order);
@@ -70,7 +68,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
              * Because this is an iframe, we need tell the api to generate a link that after payment is complete
              * it won't redirect the user (within the iframe) anywhere. our code will handle that.
              */
-            if ($isCheckoutIframe || $isCheckoutEmbedded) {
+            if ($isCheckoutEmbedded) {
                 $order->setNoRedirects(true);
             }
 
@@ -90,6 +88,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
 
             $pensopayCheckoutHelper->getCoreSession()->addError($e->getMessage());
             $this->_redirect('checkout/cart');
+            return;
         }
 
         if ((int) $pensopayCheckoutHelper->getPaymentConfig('sendmailorderconfirmationbefore') == 1 && !$order->getEmailSent()) {
@@ -97,26 +96,23 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
         }
 
         if ($isCheckoutEmbedded) {
+            $store = Mage::app()->getStore();
             $paymentData = [
                 'payment_link' => $paymentLink,
                 'total' => $order->getGrandTotal(),
                 'currency' => $order->getOrderCurrencyCode(),
-                'redirecturl' => Mage::app()->getStore()->getUrl('pensopay/payment/success'),
-                'cancelurl' => Mage::app()->getStore()->getUrl('pensopay/payment/cancel'),
+                'redirecturl' => $store?->getUrl('pensopay/payment/success'),
+                'cancelurl' => $store?->getUrl('pensopay/payment/cancel'),
             ];
 
             $pensopayCheckoutHelper->getCoreSession()->setPaymentData(Mage::helper('core')->jsonEncode($paymentData));
-            //            $this->_redirect('*/*/iframe');
             $this->_redirect('*/*/embedded');
         } else {
             $this->_redirectUrl($paymentLink);
         }
     }
 
-    /**
-     *
-     */
-    public function successAction()
+    public function successAction(): void
     {
         /** @var Mage_Checkout_Model_Session $checkoutSession */
         $checkoutSession = Mage::getSingleton('checkout/session');
@@ -127,14 +123,15 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
         if (!$checkoutSession->getLastSuccessQuoteId()) {
             $orderHash = $this->getRequest()->getParam('ori');
             if (empty($orderHash)) {
-                return $this->_redirect('checkout/onepage/success');
+                $this->_redirect('checkout/onepage/success');
+                return;
             }
             $orderId = Mage::getModel('core/encryption')->decrypt($orderHash);
             $order = Mage::getModel('sales/order')->load($orderId);
             $checkoutSession->setLastSuccessQuoteId($order->getQuoteId());
             $checkoutSession->setLastQuoteId($order->getQuoteId());
-            $checkoutSession->setLastRealOrderId($order->getId());
-            $checkoutSession->setLastOrderId($order->getId());
+            $checkoutSession->setLastRealOrderId($order->getIncrementId());
+            $checkoutSession->setLastOrderId((int) $order->getId());
         } else {
             $order = $pensopayCheckoutHelper->getCheckoutSession()->getLastRealOrder();
         }
@@ -143,7 +140,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
 
         if ($quoteID) {
             $quote = Mage::getModel('sales/quote')->load($quoteID);
-            $quote->setIsActive(false)->save();
+            $quote->setIsActive(0)->save();
         }
 
         if ((int) $pensopayCheckoutHelper->getPaymentConfig('auto_capture') == 1) {
@@ -151,14 +148,14 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                 $invoice = $order->prepareInvoice();
                 $invoice->register();
 
-                $invoice->setEmailSent(true);
-                $invoice->getOrder()->setCustomerNoteNotify(true);
+                $invoice->setEmailSent(1);
+                $invoice->getOrder()->setCustomerNoteNotify(1);
                 $invoice->sendEmail(true, '');
 
                 Mage::getModel('core/resource_transaction')->addObject($invoice)->addObject($invoice->getOrder())->save();
                 $order->setStatus('complete');
                 $order->setState('complete');
-                $order->addStatusToHistory(Mage_Sales_Model_Order::STATE_COMPLETE);
+                $order->addStatusHistoryComment(Mage_Sales_Model_Order::STATE_COMPLETE);
                 $order->save();
                 $this->_redirect('checkout/onepage/success');
             }
@@ -167,7 +164,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
 
             if ($order->getStatus() !== $nStatus) {
                 $order->setState($nStatus, true);
-                $order->addStatusToHistory($nStatus);
+                $order->addStatusHistoryComment($nStatus);
                 $order->save();
             }
         }
@@ -181,13 +178,17 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
 
     /**
      * Handle callback
-     *
-     * @return $this
      */
-    public function callbackAction()
+    public function callbackAction(): void
     {
         $requestBody = $this->getRequest()->getRawBody();
+        if ($requestBody === false) {
+            return;
+        }
         $request = Mage::helper('core')->jsonDecode($requestBody, false);
+        if (!$request instanceof stdClass) {
+            return;
+        }
 
         $checksum = hash_hmac('sha256', $requestBody, $this->getPrivateKey());
 
@@ -200,16 +201,16 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
             /** @var PensoPay_Payment_Model_Payment $paymentModel */
             $paymentModel = Mage::getModel('pensopay/payment')->load($request->order_id, 'order_id');
 
-            if (!$paymentModel->getIsVirtualterminal()) {
-                /** @var Mage_Sales_Model_Order $order */
-                $order = Mage::getModel('sales/order')->loadByIncrementId($request->order_id);
+            /** @var Mage_Sales_Model_Order $order */
+            $order = Mage::getModel('sales/order')->loadByIncrementId($request->order_id);
 
+            if (!$paymentModel->getIsVirtualterminal()) {
                 if (!Mage::getStoreConfigFlag(PensoPay_Payment_Model_Config::XML_PATH_TESTMODE_ENABLED) && $request->test_mode) {
                     //Cancel order
                     if ($order->canCancel()) {
                         try {
                             $order->cancel();
-                            $order->addStatusToHistory($order->getStatus(), 'Order placed with test card.');
+                            $order->addStatusHistoryComment('Order placed with test card.');
                             $order->save();
                         } catch (Exception $e) {
                             Mage::log('Failed to cancel testmode order #' . $order->getIncrementId(), null, 'qp_debug.log');
@@ -220,7 +221,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                         'error' => 'Attempted to pay with test card but testmode is disabled',
                     ]));
 
-                    return $this;
+                    return;
                 }
 
                 if (Mage::getStoreConfigFlag(PensoPay_Payment_Model_Config::XML_PATH_SUBTRACT_STOCK_ON_PROCESSING)) {
@@ -247,11 +248,13 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                 && !$paymentModel->getIsVirtualterminal()) {
                 try {
                     if ($request->facilitator == 'mobilepay' && isset($request->variables->mobilepay_address)) {
-                        $order = $this->updateOrderByCallback($order, $request);
-
-                        $order->addStatusHistoryComment(Mage::helper('pensopay')->__('Order was created from MobilePay Checkout'))
-                            ->setIsCustomerNotified(false)
-                            ->save();
+                        $updatedOrder = $this->updateOrderByCallback($order, $request);
+                        if ($updatedOrder) {
+                            $order = $updatedOrder;
+                            $order->addStatusHistoryComment(Mage::helper('pensopay')->__('Order was created from MobilePay Checkout'))
+                                ->setIsCustomerNotified(false)
+                                ->save();
+                        }
                     }
 
                     if ((int) $pensopayCheckoutHelper->getPaymentConfig('sendmailorderconfirmation') == 1 && !$order->getEmailSent()) {
@@ -274,18 +277,18 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
     /**
      * Show payment iframe
      */
-    public function iframeAction()
+    public function iframeAction(): void
     {
         $this->loadLayout();
         $this->renderLayout();
     }
 
-    public function pollPaymentAction()
+    public function pollPaymentAction(): void
     {
         /** @var Mage_Checkout_Model_Session $checkoutSession */
         $checkoutSession = Mage::getSingleton('checkout/session');
 
-        /** @var Mage_sales_Model_Order $order */
+        /** @var Mage_Sales_Model_Order $order */
         $order = $checkoutSession->getLastRealOrder();
 
         /** @var PensoPay_Payment_Model_Payment $payment */
@@ -300,7 +303,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                             'repeat' => 0,
                             'error' => 1,
                             'success' => 0,
-                            'redirect' => Mage::app()->getStore()->getUrl('pensopay/payment/cancel'),
+                            'redirect' => Mage::app()->getStore()?->getUrl('pensopay/payment/cancel'),
                         ],
                     ));
                     return;
@@ -318,7 +321,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                                 'repeat' => 0,
                                 'error' => 0,
                                 'success' => 1,
-                                'redirect' => Mage::app()->getStore()->getUrl('pensopay/payment/success'),
+                                'redirect' => Mage::app()->getStore()?->getUrl('pensopay/payment/success'),
                             ],
                         ));
                     } else {
@@ -328,7 +331,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                                 'repeat' => 0,
                                 'error' => 1,
                                 'success' => 0,
-                                'redirect' => Mage::app()->getStore()->getUrl('pensopay/payment/cancel'),
+                                'redirect' => Mage::app()->getStore()?->getUrl('pensopay/payment/cancel'),
                             ],
                         ));
                     }
@@ -352,12 +355,12 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                 'repeat' => 0,
                 'error' => 1,
                 'success' => 0,
-                'redirect' => Mage::app()->getStore()->getUrl('/'),
+                'redirect' => Mage::app()->getStore()?->getUrl('/'),
             ],
         ));
     }
 
-    public function iframeCancelAction()
+    public function iframeCancelAction(): void
     {
         /** @var PensoPay_Payment_Helper_Checkout $pensopayCheckoutHelper */
         $pensopayCheckoutHelper = Mage::helper('pensopay/checkout');
@@ -380,7 +383,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
     /**
      * Handle customer cancelling payment
      */
-    public function cancelAction()
+    public function cancelAction(): void
     {
         /** @var PensoPay_Payment_Helper_Checkout $pensopayCheckoutHelper */
         $pensopayCheckoutHelper = Mage::helper('pensopay/checkout');
@@ -404,15 +407,17 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
 
     /**
      * Get private key
-     *
-     * @return mixed
      */
-    private function getPrivateKey()
+    private function getPrivateKey(): mixed
     {
         return Mage::getStoreConfig(PensoPay_Payment_Model_Config::XML_PATH_PRIVATE_KEY);
     }
 
-    protected function _getProductsQty($relatedItems)
+    /**
+     * @param iterable<Mage_Sales_Model_Quote_Item> $relatedItems
+     * @return array<int, array{item: mixed, qty: float|int}>
+     */
+    protected function _getProductsQty(iterable $relatedItems): array
     {
         $items = [];
         foreach ($relatedItems as $item) {
@@ -432,7 +437,10 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
         return $items;
     }
 
-    protected function _addItemToQtyArray($quoteItem, &$items)
+    /**
+     * @param array<int, array{item: mixed, qty: float|int}> $items
+     */
+    protected function _addItemToQtyArray(Mage_Sales_Model_Quote_Item $quoteItem, array &$items): void
     {
         $productId = $quoteItem->getProductId();
         if (!$productId) {
@@ -452,11 +460,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
         }
     }
 
-    /**
-     * @param $order
-     * @param $data
-     */
-    public function updateOrderByCallback($order, $data)
+    public function updateOrderByCallback(Mage_Sales_Model_Order $order, stdClass $data): ?Mage_Sales_Model_Order
     {
         Mage::log('start update mobilepay order', null, 'pp_callback.log');
 
@@ -472,7 +476,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
         }
 
         if (!$shippingAddress && !$billingAddress) {
-            return;
+            return null;
         }
 
         if (!$order->getCustomerId()) {
@@ -528,10 +532,9 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
     }
 
     /**
-     * @param $name
-     * @return array
+     * @return array{firstname: string, lastname: string}
      */
-    public function splitCustomerName($name)
+    public function splitCustomerName(string $name): array
     {
         $name = trim($name);
         if (!str_contains($name, ' ')) {

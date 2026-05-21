@@ -124,8 +124,8 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
             $payment = Mage::getModel('pensopay/payment')->load($id);
             if ($payment->getId()) {
                 $form->addValues($payment->getData());
-                $form->getElement('order_id')->setDisabled(true);
-                $form->getElement('currency_code')->setDisabled(true);
+                $form->getElement('order_id')?->setDisabled(true);
+                $form->getElement('currency_code')?->setDisabled(true);
 
                 if ($payment->getState() !== PensoPay_Payment_Model_Payment::STATE_INITIAL) {
                     foreach ($customerFieldset->getElements() as $element) {
@@ -166,10 +166,11 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
         }
 
         $this->setForm($form);
+        return $this;
     }
 
 
-    protected function _getAllLocales()
+    protected function _getAllLocales(): array
     {
         $options = Mage::app()->getLocale()->getOptionLocales();
         $locales = [];
@@ -179,7 +180,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
         return $locales;
     }
 
-    protected function _getAllCurrencies()
+    protected function _getAllCurrencies(): array
     {
         $currencyModel = Mage::getModel('adminhtml/system_config_source_currency');
         $options = $currencyModel->toOptionArray(false);
@@ -190,7 +191,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
         return $currencies;
     }
 
-    protected function _getAllIso3Countries()
+    protected function _getAllIso3Countries(): array
     {
         $countryCollection = Mage::getResourceModel('directory/country_collection');
         $countries = [];

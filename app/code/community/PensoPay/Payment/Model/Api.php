@@ -8,18 +8,16 @@ class PensoPay_Payment_Model_Api
     protected $baseurl = 'https://api.quickpay.net';
 
     /**
-     * @param $request
-     * @param Mage_Sales_Model_Order $order
      * @throws Mage_Core_Exception
      */
-    protected function _setupRequest(&$request, $order)
+    protected function _setupRequest(\Maho\DataObject $request, Mage_Sales_Model_Order $order): void
     {
         $request->setOrderId($order->getIncrementId());
         $request->setCurrency($order->getOrderCurrencyCode());
 
         /** @var PensoPay_Payment_Helper_Data $helper */
         $helper = Mage::helper('pensopay');
-        $helper->setTransactionStoreId($order->getStore()->getId());
+        $helper->setTransactionStoreId((int) $order->getStore()->getId());
 
         if ($textOnStatement = Mage::getStoreConfig(PensoPay_Payment_Model_Config::XML_PATH_TEXT_ON_STATEMENT, $order->getStore())) {
             $request->setTextOnStatement($textOnStatement);
@@ -32,8 +30,9 @@ class PensoPay_Payment_Model_Api
         if (!$order->getIsVirtualTerminal()) {
             $billingAddress = $order->getBillingAddress();
             $shippingAddress = $order->getShippingAddress();
+            $orderPayment = $order->getPayment();
 
-            if ($order->getPayment()->getMethodInstance()->getPaymentMethods() === 'mobilepay') {
+            if ($orderPayment && $orderPayment->getMethodInstance()->getPaymentMethods() === 'mobilepay') {
                 $billingAddress = null;
                 $shippingAddress = null;
             }
@@ -166,7 +165,7 @@ class PensoPay_Payment_Model_Api
         return Mage::helper('core')->jsonDecode($payment, false);
     }
 
-    public function cancel($paymentId)
+    public function cancel(string $paymentId): mixed
     {
         $request = new \Maho\DataObject();
         $request->setId($paymentId);
@@ -180,7 +179,7 @@ class PensoPay_Payment_Model_Api
         return Mage::helper('core')->jsonDecode($payment, false);
     }
 
-    public function refund($paymentId, $amount)
+    public function refund(string $paymentId, float $amount): mixed
     {
         $request = new \Maho\DataObject();
         $request->setId($paymentId);
@@ -198,11 +197,9 @@ class PensoPay_Payment_Model_Api
     /**
      * Create payment link
      *
-     * @param $paymentId
-     * @return mixed
      * @throws Mage_Core_Exception
      */
-    public function createPaymentLink(Mage_Sales_Model_Order $order, $paymentId, $address = false)
+    public function createPaymentLink(Mage_Sales_Model_Order $order, string $paymentId, bool $address = false): mixed
     {
         Mage::log($paymentId, null, PensoPay_Payment_Helper_Data::LOG_FILENAME);
 
@@ -218,7 +215,7 @@ class PensoPay_Payment_Model_Api
         if (!$order->getIsVirtualTerminal()) {
             $request->setAmount($order->getTotalDue() * 100);
             if (!$order->getNoRedirects()) {
-                $request->setContinueurl($this->getContinueUrl($order->getStore(), $order->getId()));
+                $request->setContinueurl($this->getContinueUrl($order->getStore(), (string) $order->getId()));
                 $request->setCancelurl($this->getCancelUrl($order->getStore()));
             } else {
                 $request->setCancelurl($this->getCancelIframeUrl($order->getStore())); //Even if iframe, we need this to poll payment status
@@ -226,7 +223,10 @@ class PensoPay_Payment_Model_Api
             $request->setLanguage($this->getLanguageFromLocale(Mage::app()->getLocale()->getLocaleCode()));
             $request->setAutocapture(Mage::getStoreConfig(PensoPay_Payment_Model_Config::XML_PATH_AUTO_CAPTURE, $store));
             $request->setAutofee(Mage::getStoreConfig(PensoPay_Payment_Model_Config::XML_PATH_AUTO_FEE, $store));
-            $request->setPaymentMethods($order->getPayment()->getMethodInstance()->getPaymentMethods());
+            $orderPayment = $order->getPayment();
+            if ($orderPayment) {
+                $request->setPaymentMethods($orderPayment->getMethodInstance()->getPaymentMethods());
+            }
 
             if ($address) {
                 $request->setData('invoice_address_selection', true);
@@ -257,7 +257,7 @@ class PensoPay_Payment_Model_Api
 
         /** @var PensoPay_Payment_Helper_Data $helper */
         $helper = Mage::helper('pensopay');
-        $helper->setTransactionStoreId($store->getId());
+        $helper->setTransactionStoreId((int) $store->getId());
 
         $request->setCallbackUrl($this->getCallbackUrl($store));
 
@@ -280,11 +280,9 @@ class PensoPay_Payment_Model_Api
     /**
      * Request the deletion of the link for a specific payment.
      *
-     * @param $paymentId
-     * @return mixed
      * @throws Mage_Core_Exception
      */
-    public function deletePaymentLink($paymentId)
+    public function deletePaymentLink(string $paymentId): mixed
     {
         Mage::log('Deleting payment link for ' . $paymentId, null, PensoPay_Payment_Helper_Data::LOG_FILENAME);
 
@@ -297,7 +295,7 @@ class PensoPay_Payment_Model_Api
         return Mage::helper('core')->jsonDecode($link, false)->url;
     }
 
-    public function capture($paymentId, $amount)
+    public function capture(string $paymentId, float $amount): mixed
     {
         $request = new \Maho\DataObject();
         $request->setId($paymentId);
@@ -312,7 +310,7 @@ class PensoPay_Payment_Model_Api
         return Mage::helper('core')->jsonDecode($payment, false);
     }
 
-    public function getPayment($paymentId, $store = null)
+    public function getPayment(string $paymentId, ?Mage_Core_Model_Store $store = null): mixed
     {
         Mage::log('Updating payment state for ' . $paymentId, null, PensoPay_Payment_Helper_Data::LOG_FILENAME);
 
@@ -328,14 +326,11 @@ class PensoPay_Payment_Model_Api
     /**
      * Perform a API request
      *
-     * @param $resource
-     * @param array $data
-     * @param string $method
-     * @param array $expectedResponseCodes
-     * @return string
+     * @param array<string, mixed> $data
+     * @param array<int> $expectedResponseCodes
      * @throws Mage_Core_Exception
      */
-    protected function request($resource, $data = [], $method = 'POST', $expectedResponseCodes = [200, 201, 202])
+    protected function request(string $resource, array $data = [], string $method = 'POST', array $expectedResponseCodes = [200, 201, 202]): string
     {
         $client = \Symfony\Component\HttpClient\HttpClient::create();
         $url = $this->baseurl . '/' . $resource;
@@ -377,11 +372,8 @@ class PensoPay_Payment_Model_Api
 
     /**
      * Get language string from locale code
-     *
-     * @param $locale
-     * @return mixed
      */
-    private function getLanguageFromLocale($locale)
+    private function getLanguageFromLocale(string $locale): string
     {
         $languageMap = [
             'nb' => 'no',
@@ -396,35 +388,29 @@ class PensoPay_Payment_Model_Api
 
     /**
      * Get continue url
-     * @param Mage_Core_Model_Store $store
-     * @return string
      */
-    private function getContinueUrl($store, $orderId = '')
+    private function getContinueUrl(Mage_Core_Model_Store $store, string $orderId = ''): string
     {
         return $store->getUrl('pensopay/payment/success', ['_query' => ['ori' => Mage::getModel('core/encryption')->encrypt($orderId)]]);
     }
 
-    private function getCancelIframeUrl($store)
+    private function getCancelIframeUrl(Mage_Core_Model_Store $store): string
     {
         return $store->getUrl('pensopay/payment/iframeCancel');
     }
 
     /**
      * Get cancel url
-     * @param Mage_Core_Model_Store $store
-     * @return string
      */
-    private function getCancelUrl($store)
+    private function getCancelUrl(Mage_Core_Model_Store $store): string
     {
         return $store->getUrl('pensopay/payment/cancel');
     }
 
     /**
      * Get callback url
-     * @param Mage_Core_Model_Store $store
-     * @return string
      */
-    private function getCallbackUrl($store)
+    private function getCallbackUrl(Mage_Core_Model_Store $store): string
     {
         return $store->getUrl('pensopay/payment/callback');
     }

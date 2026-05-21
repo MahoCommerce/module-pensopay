@@ -9,11 +9,9 @@ class PensoPay_Payment_Model_Method_Viabill extends PensoPay_Payment_Model_Metho
 
     /**
      * Get payment methods
-     *
-     * @return mixed
      */
     #[\Override]
-    public function getPaymentMethods()
+    public function getPaymentMethods(): mixed
     {
         return 'viabill';
     }

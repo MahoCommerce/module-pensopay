@@ -69,13 +69,11 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
                 $this->_addButton('cancel', [
                     'label' => $this->__('Cancel'),
                     'class' => 'delete',
-                    'onclick' => 'deleteConfirm(\''
-                        . Mage::helper('core')->jsQuoteEscape(
-                            $this->__('Are you sure you want to do this?'),
-                        )
-                        . '\', \''
-                        . $cancelUrl
-                        . '\')',
+                    'onclick' => sprintf(
+                        'deleteConfirm(%s, %s)',
+                        json_encode($this->__('Are you sure you want to do this?'), JSON_THROW_ON_ERROR),
+                        json_encode($cancelUrl, JSON_THROW_ON_ERROR),
+                    ),
                 ], 1, 4);
             }
 
@@ -83,13 +81,11 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
                 $this->_addButton('Capture', [
                     'label' => $this->__('Capture'),
                     'class' => 'save',
-                    'onclick' => 'deleteConfirm(\''
-                        . Mage::helper('core')->jsQuoteEscape(
-                            $this->__('Are you sure you want to do this?'),
-                        )
-                        . '\', \''
-                        . $captureUrl
-                        . '\')',
+                    'onclick' => sprintf(
+                        'deleteConfirm(%s, %s)',
+                        json_encode($this->__('Are you sure you want to do this?'), JSON_THROW_ON_ERROR),
+                        json_encode($captureUrl, JSON_THROW_ON_ERROR),
+                    ),
                 ], 1, 5);
             }
 
@@ -97,13 +93,11 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
                 $this->_addButton('Refund', [
                     'label' => $this->__('Refund'),
                     'class' => 'cancel',
-                    'onclick' => 'deleteConfirm(\''
-                        . Mage::helper('core')->jsQuoteEscape(
-                            $this->__('Are you sure you want to do this?'),
-                        )
-                        . '\', \''
-                        . $refundUrl
-                        . '\')',
+                    'onclick' => sprintf(
+                        'deleteConfirm(%s, %s)',
+                        json_encode($this->__('Are you sure you want to do this?'), JSON_THROW_ON_ERROR),
+                        json_encode($refundUrl, JSON_THROW_ON_ERROR),
+                    ),
                 ], 1, 6);
             }
 

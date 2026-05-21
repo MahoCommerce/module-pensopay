@@ -26,7 +26,8 @@ class PensoPay_Payment_Block_Adminhtml_System_Config_Form_Field_Version extends 
     #[\Override]
     protected function _getElementHtml(\Maho\Data\Form\Element\AbstractElement $element)
     {
-        $installedVersion = Mage::getConfig()->getNode()->modules->PensoPay_Payment->version;
+        $node = Mage::getConfig()?->getNode();
+        $installedVersion = $node ? $node->modules->PensoPay_Payment->version : '';
 
         return '<strong>' . $installedVersion . '</strong>';
     }

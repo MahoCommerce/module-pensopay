@@ -1,5 +1,6 @@
+<?php /** @var Mage_Core_Block_Template $this */ ?>
 <div style="display:none">
-    <a id="paymentLink" target="_blank" href="<?php echo $this->getPaymentLink(); ?>"></a>
+    <a id="paymentLink" target="_blank" href="<?= $this->getPaymentLink(); ?>"></a>
 </div>
 <?php if ($this->getPaymentLinkAutovisit()): ?>
     <script type="text/javascript">

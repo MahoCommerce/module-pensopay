@@ -1,3 +1,4 @@
+<?php /** @var PensoPay_Payment_Block_Checkout_Mobilepay $this */ ?>
 <?php if($this->isActive()) : ?>
 <div class="mobilepay-wrapper">
     <h2><?php echo $this->getTitle() ?></h2>
@@ -14,7 +15,7 @@
                 <?php if($this->getPopupDescription()) : ?>
                     <p><?php echo $this->getPopupDescription(); ?></p>
                 <?php endif; ?>
-                <label><?php echo __('Vælg forsendelsesmetode') ?>:</label>
+                <label><?= $this->__('Vælg forsendelsesmetode') ?>:</label>
                 <select name="shipping" class="input-text required-entry">
                     <option value="">---</option>
                     <?php foreach($methods as $code => $method) : ?>

@@ -60,8 +60,7 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
      * Set order status to pending
      *
      * @param string $paymentAction
-     * @param object $stateObject
-     * @return Mage_Payment_Model_Abstract
+     * @param \Maho\DataObject $stateObject
      */
     #[\Override]
     public function initialize($paymentAction, $stateObject)
@@ -73,14 +72,13 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
         return parent::initialize($paymentAction, $stateObject);
     }
 
-    private function _getSession()
+    private function _getSession(): Mage_Adminhtml_Model_Session
     {
         return Mage::getSingleton('adminhtml/session');
     }
 
     /**
      * @param float $amount
-     * @return $this|Mage_Payment_Model_Abstract
      * @throws Exception
      */
     #[\Override]
@@ -134,7 +132,6 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
 
     /**
      * @param float $amount
-     * @return $this|Mage_Payment_Model_Abstract
      * @throws Exception
      */
     #[\Override]
@@ -183,15 +180,14 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
     }
 
     /**
-     * @param $order
-     * @param $transactionId
-     * @param $type
-     * @return false|Mage_Core_Model_Abstract|Mage_Sales_Model_Order_Payment_Transaction
      * @throws Exception
      */
-    public function createTransaction($order, $transactionId, $type)
+    public function createTransaction(Mage_Sales_Model_Order $order, string $transactionId, string $type): Mage_Sales_Model_Order_Payment_Transaction
     {
         $orderPayment = $order->getPayment();
+        if (!$orderPayment) {
+            throw new Exception($this->_helper->__('Order payment not found.'));
+        }
         $orderPayment->setLastTransId($transactionId);
         $orderPayment->save();
 
@@ -201,13 +197,12 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
         if (! $transaction = $transaction->loadByTxnId($transactionId)) {
             $transaction = Mage::getModel('sales/order_payment_transaction');
             $transaction->setOrderPaymentObject($orderPayment);
-            $transaction->setOrder($order);
         }
 
         if ($type == Mage_Sales_Model_Order_Payment_Transaction::TYPE_AUTH) {
-            $transaction->setIsClosed(false);
+            $transaction->setIsClosed(0);
         } else {
-            $transaction->setIsClosed(true);
+            $transaction->setIsClosed(1);
         }
 
         $transaction->setTxnId($transactionId);
@@ -219,10 +214,8 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
 
     /**
      * Get payment methods
-     *
-     * @return mixed
      */
-    public function getPaymentMethods()
+    public function getPaymentMethods(): mixed
     {
         if ($this->getConfigData('payment_methods') === 'specified') {
             return $this->getConfigData('payment_methods_specified');
@@ -233,10 +226,8 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
 
     /**
      * Get Order place redirect url
-     *
-     * @return string
      */
-    public function getOrderPlaceRedirectUrl()
+    public function getOrderPlaceRedirectUrl(): string
     {
         return Mage::getUrl('pensopay/payment/redirect', ['_secure' => true]);
     }

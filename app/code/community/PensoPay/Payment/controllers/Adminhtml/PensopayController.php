@@ -2,13 +2,13 @@
 
 class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Controller_Action
 {
-    /** @var PensoPay_Payment_Model_Payment $_payment */
+    /** @var PensoPay_Payment_Model_Payment|null $_payment */
     protected $_payment = null;
 
     /** @var bool $_redirect */
     protected $_redirect = true;
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->_redirectToTerminal();
     }
@@ -17,28 +17,29 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
     /**
      * Show virtual terminal
      */
-    public function terminalAction()
+    public function terminalAction(): void
     {
         $this->loadLayout();
         $this->renderLayout();
     }
 
-    private function _redirectToTerminal($error = '')
+    private function _redirectToTerminal(string $error = ''): void
     {
         if (!empty($error)) {
             $this->_getSession()->addError($error);
         }
-        return $this->_redirect('adminhtml/pensopay/terminal');
+        $this->_redirect('adminhtml/pensopay/terminal');
     }
 
-    public function editAction()
+    public function editAction(): void
     {
         $id = $this->getRequest()->getParam('id');
 
         if (!empty($id)) {
             $payment = Mage::getModel('pensopay/payment')->load($id);
             if (!$payment->getId()) {
-                return $this->_redirectToTerminal($this->__('Payment not found.'));
+                $this->_redirectToTerminal($this->__('Payment not found.'));
+                return;
             }
         }
 
@@ -47,12 +48,11 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
     }
 
     /**
-     * @param $postData
-     * @param null $payment
-     * @return false|Mage_Core_Model_Abstract|Mage_Sales_Model_Order
+     * @param array<string, mixed> $postData
      */
-    private function _getOrderObject($postData, $payment = null)
+    private function _getOrderObject(array $postData, ?PensoPay_Payment_Model_Payment $payment = null): Mage_Sales_Model_Order
     {
+        /** @var Mage_Sales_Model_Order $order */
         $order = Mage::getModel('sales/order');
 
         if ($payment) {
@@ -80,13 +80,14 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         return $order;
     }
 
-    private function _updatePaymentLink($sendEmail)
+    private function _updatePaymentLink(bool $sendEmail): bool
     {
         /** @var Mage_Core_Controller_Request_Http $request */
         $request = $this->getRequest();
         $postData = $request->getPost();
 
         $incId = $request->getParam('id');
+        /** @var PensoPay_Payment_Model_Payment $paymentModel */
         $paymentModel = Mage::getModel('pensopay/payment');
         if (!empty($incId)) { //Existing payment
             $paymentModel->load($incId);
@@ -97,11 +98,6 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
 
         $order = $this->_getOrderObject($postData, $paymentModel);
 
-        if (!$order) {
-            $this->_getSession()->addError($this->__('Could not create payment object.'));
-            return false;
-        }
-
         /** @var Mage_Core_Controller_Request_Http $request */
         $request = $this->getRequest();
         $postData = $request->getPost();
@@ -110,7 +106,6 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         $api = Mage::getModel('pensopay/api');
 
         try {
-            //            $api->deletePaymentLink($order->getReferenceId()); //Currently not accepted
             $payment = $api->updatePayment($order);
             $paymentLink = $api->createPaymentLink($order, $payment->id);
 
@@ -133,22 +128,13 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         return true;
     }
 
-    /**
-     * @param $sendEmail
-     * @return bool
-     */
-    private function _createPaymentLink($sendEmail)
+    private function _createPaymentLink(bool $sendEmail): bool
     {
         /** @var Mage_Core_Controller_Request_Http $request */
         $request = $this->getRequest();
         $postData = $request->getPost();
 
         $order = $this->_getOrderObject($postData);
-
-        if (!$order) {
-            $this->_getSession()->addError($this->__('Could not create payment object.'));
-            return false;
-        }
 
         /** @var PensoPay_Payment_Model_Api $api */
         $api = Mage::getModel('pensopay/api');
@@ -180,43 +166,43 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         return true;
     }
 
-    public function saveAndPayAction()
+    public function saveAndPayAction(): void
     {
         if ($this->getRequest()->isPost()) {
             if ($this->_createPaymentLink(false)) {
                 $this->_getSession()->setPaymentLinkAutovisit(true);
             }
         }
-        return $this->_redirectToTerminal();
+        $this->_redirectToTerminal();
     }
 
-    public function saveAndSendAction()
+    public function saveAndSendAction(): void
     {
         if ($this->getRequest()->isPost()) {
             $this->_createPaymentLink(true);
         }
-        return $this->_redirectToTerminal();
+        $this->_redirectToTerminal();
     }
 
-    public function updateAndPayAction()
+    public function updateAndPayAction(): void
     {
         if ($this->getRequest()->isPost()) {
             if ($this->_updatePaymentLink(false)) {
                 $this->_getSession()->setPaymentLinkAutovisit(true);
             }
         }
-        return $this->_redirectToTerminal();
+        $this->_redirectToTerminal();
     }
 
-    public function updateAndSendAction()
+    public function updateAndSendAction(): void
     {
         if ($this->getRequest()->isPost()) {
             $this->_updatePaymentLink(true);
         }
-        return $this->_redirectToTerminal();
+        $this->_redirectToTerminal();
     }
 
-    public function updatePaymentStatusAction()
+    public function updatePaymentStatusAction(): void
     {
         /** @var Mage_Core_Controller_Request_Http $request */
         $request = $this->getRequest();
@@ -226,7 +212,8 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         /** @var PensoPay_Payment_Model_Payment $paymentModel */
         $paymentModel = Mage::getModel('pensopay/payment');
         if (empty($incId)) {
-            return $this->_redirectToTerminal($this->__('Payment not found.'));
+            $this->_redirectToTerminal($this->__('Payment not found.'));
+            return;
         }
         try {
             $paymentModel->load($incId);
@@ -236,10 +223,10 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
             $this->_getSession()->addError($e->getMessage());
         }
 
-        return $this->_redirect('*/*/edit', ['id' => $paymentModel->getId()]);
+        $this->_redirect('*/*/edit', ['id' => $paymentModel->getId()]);
     }
 
-    protected function _getPayment()
+    protected function _getPayment(): ?PensoPay_Payment_Model_Payment
     {
         if (!$this->_payment) {
             /** @var Mage_Core_Controller_Request_Http $request */
@@ -263,7 +250,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         return $this->_payment;
     }
 
-    protected function _genericPaymentCallback($action)
+    protected function _genericPaymentCallback(string $action): bool
     {
         /** @var PensoPay_Payment_Model_Api $api */
         $api = Mage::getModel('pensopay/api');
@@ -282,7 +269,8 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
                 $paymentModel->save();
             } catch (Exception $e) {
                 if ($this->_redirect) {
-                    return $this->_redirectToTerminal($e->getMessage());
+                    $this->_redirectToTerminal($e->getMessage());
+                    return true;
                 }
                 $this->_getSession()->addError($e->getMessage());
                 return false;
@@ -290,27 +278,27 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         }
 
         if ($this->_redirect) {
-            return $this->_redirectToTerminal();
+            $this->_redirectToTerminal();
         }
         return true;
     }
 
-    public function cancelPaymentAction()
+    public function cancelPaymentAction(): void
     {
-        return $this->_genericPaymentCallback('cancel');
+        $this->_genericPaymentCallback('cancel');
     }
 
-    public function capturePaymentAction()
+    public function capturePaymentAction(): void
     {
-        return $this->_genericPaymentCallback('capture');
+        $this->_genericPaymentCallback('capture');
     }
 
-    public function refundPaymentAction()
+    public function refundPaymentAction(): void
     {
-        return $this->_genericPaymentCallback('refund');
+        $this->_genericPaymentCallback('refund');
     }
 
-    protected function _genericMassPaymentAction($action)
+    protected function _genericMassPaymentAction(string $action): void
     {
         /** @var Mage_Core_Controller_Request_Http $request */
         $request = $this->getRequest();
@@ -335,22 +323,22 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
                 $this->_getSession()->addError($this->__('No payments found.'));
             }
         }
-        return $this->_redirectToTerminal();
+        $this->_redirectToTerminal();
     }
 
-    public function massCaptureAction()
+    public function massCaptureAction(): void
     {
-        return $this->_genericMassPaymentAction('capture');
+        $this->_genericMassPaymentAction('capture');
     }
 
-    public function massCancelAction()
+    public function massCancelAction(): void
     {
-        return $this->_genericMassPaymentAction('cancel');
+        $this->_genericMassPaymentAction('cancel');
     }
 
-    public function massRefundAction()
+    public function massRefundAction(): void
     {
-        return $this->_genericMassPaymentAction('refund');
+        $this->_genericMassPaymentAction('refund');
     }
 
     /**
@@ -358,15 +346,16 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
      *
      * @throws Mage_Core_Exception
      */
-    public function orderMassCaptureAction()
+    public function orderMassCaptureAction(): void
     {
         $orderIds = $this->getRequest()->getPost('order_ids', []);
 
         foreach ($orderIds as $orderId) {
             /** @var Mage_Sales_Model_Order $order */
             $order = Mage::getModel('sales/order')->load($orderId);
+            $orderPayment = $order->getPayment();
 
-            if (!$order->getPayment()->getMethodInstance() instanceof PensoPay_Payment_Model_Method) {
+            if (!$orderPayment || !$orderPayment->getMethodInstance() instanceof PensoPay_Payment_Model_Method) {
                 $this->_getSession()->addError($this->__('%s Order was not placed using PensoPay', $order->getIncrementId()));
                 continue;
             }
@@ -377,7 +366,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
                     continue;
                 }
 
-                /* @var $invoice Mage_Sales_Model_Order_Invoice */
+                /** @var Mage_Sales_Model_Order_Invoice $invoice */
                 $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice();
 
                 if (!$invoice->getTotalQty()) {

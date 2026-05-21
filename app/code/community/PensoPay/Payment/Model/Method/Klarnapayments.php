@@ -9,11 +9,9 @@ class PensoPay_Payment_Model_Method_Klarnapayments extends PensoPay_Payment_Mode
 
     /**
      * Get payment methods
-     *
-     * @return mixed
      */
     #[\Override]
-    public function getPaymentMethods()
+    public function getPaymentMethods(): mixed
     {
         return 'klarna-payments';
     }

@@ -5,7 +5,7 @@ class PensoPay_Payment_Model_Observer
     /**
      * Check for feed updates
      */
-    public function controllerActionPredispatch(\Maho\Event\Observer $observer)
+    public function controllerActionPredispatch(\Maho\Event\Observer $observer): void
     {
         if (Mage::getSingleton('admin/session')->isLoggedIn()) {
             /** @var PensoPay_Payment_Model_Feed $feedModel */
@@ -17,10 +17,8 @@ class PensoPay_Payment_Model_Observer
 
     /**
      * Add fraud probability to order grid
-     *
-     * @return $this
      */
-    public function onBlockHtmlBefore(\Maho\Event\Observer $observer)
+    public function onBlockHtmlBefore(\Maho\Event\Observer $observer): void
     {
         $block = $observer->getEvent()->getBlock();
 
@@ -40,7 +38,7 @@ class PensoPay_Payment_Model_Observer
     /**
      * Disable stock subtraction if configured to do so
      */
-    public function checkoutTypeOnepageSaveOrder(\Maho\Event\Observer $observer)
+    public function checkoutTypeOnepageSaveOrder(\Maho\Event\Observer $observer): void
     {
         /** @var Mage_Sales_Model_Quote $quote */
         $quote = $observer->getEvent()->getQuote();
@@ -49,14 +47,15 @@ class PensoPay_Payment_Model_Observer
         }
     }
 
-    public function saveOrder($observer)
+    public function saveOrder(\Maho\Event\Observer $observer): self
     {
         $session = Mage::getSingleton('adminhtml/session');
 
         try {
             /** @var Mage_Sales_Model_Order $order */
             $order = $observer->getEvent()->getOrder();
-            $payment = $order->getPayment()->getMethodInstance();
+            $orderPayment = $order->getPayment();
+            $payment = $orderPayment ? $orderPayment->getMethodInstance() : null;
             if ($payment instanceof PensoPay_Payment_Model_Payment || $payment instanceof PensoPay_Payment_Model_Method) {
                 $order->setStatus(Mage::getStoreConfig(PensoPay_Payment_Model_Config::XML_PATH_ORDER_STATUS_BEFOREPAYMENT, $order->getStore()));
             }
@@ -68,7 +67,7 @@ class PensoPay_Payment_Model_Observer
         return $this;
     }
 
-    public function addViabillPricetag(\Maho\Event\Observer $observer)
+    public function addViabillPricetag(\Maho\Event\Observer $observer): void
     {
         $block = $observer->getBlock();
         /** @var PensoPay_Payment_Helper_Data $pensopayHelper */
@@ -110,7 +109,7 @@ class PensoPay_Payment_Model_Observer
         }
     }
 
-    public function updateVirtualterminalPaymentStatus()
+    public function updateVirtualterminalPaymentStatus(): self
     {
         /** @var PensoPay_Payment_Model_Resource_Payment_Collection $collection */
         $collection = Mage::getResourceModel('pensopay/payment_collection');
@@ -129,7 +128,7 @@ class PensoPay_Payment_Model_Observer
         return $this;
     }
 
-    public function cancelOrderAfter(\Maho\Event\Observer $observer)
+    public function cancelOrderAfter(\Maho\Event\Observer $observer): void
     {
         /** @var Mage_Sales_Model_Order $order */
         $order = $observer->getEvent()->getOrder();
@@ -156,9 +155,8 @@ class PensoPay_Payment_Model_Observer
 
     /**
      * Cancel all orders that are pending payment for >= 24h
-     * @return $this
      */
-    public function pendingPaymentOrderCancel()
+    public function pendingPaymentOrderCancel(): self
     {
         //Disabled from admin
         if (!Mage::getStoreConfigFlag('payment/pensopay/pending_payment_order_cancel')) {
@@ -175,7 +173,7 @@ class PensoPay_Payment_Model_Observer
         );
         $collection->addFieldToFilter('method', ['like' => 'pensopay%']);
         $collection->getSelect()->where('HOUR(TIMEDIFF(NOW(), created_at)) >= 24');
-        /** @var Mage_Sales_Model_Order $payment */
+        /** @var Mage_Sales_Model_Order $order */
         foreach ($collection as $order) {
             try {
                 if ($order->canCancel()) {
@@ -199,12 +197,13 @@ class PensoPay_Payment_Model_Observer
         return $this;
     }
 
-    public function checkoutSubmitAllAfter(\Maho\Event\Observer $observer)
+    public function checkoutSubmitAllAfter(\Maho\Event\Observer $observer): void
     {
         /** @var Mage_Sales_Model_Order $order */
         $order = $observer->getEvent()->getOrder();
+        $orderPayment = $order->getPayment();
 
-        if ($order->getPayment()->getMethodInstance() instanceof PensoPay_Payment_Model_Method) {
+        if ($orderPayment && $orderPayment->getMethodInstance() instanceof PensoPay_Payment_Model_Method) {
             /** @var PensoPay_Payment_Model_Api $api */
             $api = Mage::getModel('pensopay/api');
 
@@ -223,7 +222,7 @@ class PensoPay_Payment_Model_Observer
             $newPayment->setIsVirtualterminal(false);
             $newPayment->save();
 
-            $order->addStatusToHistory($order->getStatus(), $helper->__('Payment link:') . ' ' . $paymentLink, false);
+            $order->addStatusHistoryComment($helper->__('Payment link:') . ' ' . $paymentLink, false);
             $order->save();
 
             /**
@@ -235,13 +234,16 @@ class PensoPay_Payment_Model_Observer
              */
             $truePaymentLink = $order->getStore()->getUrl('pensopay/payment/email', ['hash' => $newPayment->getHash()]);
 
-            $helper->sendEmail(
-                $order->getBillingAddress()->getEmail(),
-                $order->getBillingAddress()->getFirstname() . ' ' . $order->getBillingAddress()->getLastname(),
-                $order->getTotalDue(),
-                $order->getOrderCurrencyCode(),
-                $truePaymentLink,
-            );
+            $billingAddress = $order->getBillingAddress();
+            if ($billingAddress) {
+                $helper->sendEmail(
+                    $billingAddress->getEmail(),
+                    $billingAddress->getFirstname() . ' ' . $billingAddress->getLastname(),
+                    $order->getTotalDue(),
+                    $order->getOrderCurrencyCode(),
+                    $truePaymentLink,
+                );
+            }
         }
     }
 }

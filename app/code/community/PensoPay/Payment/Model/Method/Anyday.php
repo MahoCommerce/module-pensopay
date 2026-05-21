@@ -9,11 +9,9 @@ class PensoPay_Payment_Model_Method_Anyday extends PensoPay_Payment_Model_Method
 
     /**
      * Get payment methods
-     *
-     * @return mixed
      */
     #[\Override]
-    public function getPaymentMethods()
+    public function getPaymentMethods(): mixed
     {
         return 'anyday-split';
     }

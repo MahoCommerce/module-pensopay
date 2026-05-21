@@ -2,14 +2,17 @@
 
 class PensoPay_Payment_Model_System_Config_Source_Afterstatus
 {
-    // set null to enable all possible
-    protected $_stateStatuses = [
+    /** @var array<string> */
+    protected array $_stateStatuses = [
         Mage_Sales_Model_Order::STATE_NEW,
         Mage_Sales_Model_Order::STATE_PROCESSING,
         Mage_Sales_Model_Order::STATE_HOLDED,
     ];
 
-    public function toOptionArray()
+    /**
+     * @return array<array{value: string, label: string}>
+     */
+    public function toOptionArray(): array
     {
         if ($this->_stateStatuses) {
             $statuses = Mage::getSingleton('sales/order_config')->getStateStatuses($this->_stateStatuses);
