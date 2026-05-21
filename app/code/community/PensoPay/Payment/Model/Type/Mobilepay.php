@@ -5,7 +5,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
     /**
      * Prepare quote for checkout
      */
-    public function initCheckout()
+    public function initCheckout(): void
     {
         $collectTotals = false;
         $quoteSave = false;
@@ -14,7 +14,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
          * Reset multishipping flag
          */
         if ($this->getQuote()->getIsMultiShipping()) {
-            $this->getQuote()->setIsMultiShipping(false);
+            $this->getQuote()->setIsMultiShipping(0);
             $quoteSave = true;
         }
 
@@ -48,7 +48,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
              ->setCountryId('DK')
              ->setPostcode('9000');
         $this->getQuote()->getShippingAddress()->collectTotals();
-        $this->getQuote()->getShippingAddress()->setCollectShippingRates(true);
+        $this->getQuote()->getShippingAddress()->setCollectShippingRates(1);
         $this->getQuote()->getShippingAddress()->collectShippingRates();
 
         $this->saveShippingMethod($this->getQuote());
@@ -57,7 +57,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
     /**
      * Save payment method on quote
      */
-    public function savePayment(Mage_Sales_Model_Quote $quote)
+    public function savePayment(Mage_Sales_Model_Quote $quote): void
     {
         if ($quote->isVirtual()) {
             $quote->getBillingAddress()->setPaymentMethod('pensopay_mobilepay');
@@ -82,7 +82,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
     /**
      * Save shipping method on quote
      */
-    public function saveShippingMethod(Mage_Sales_Model_Quote $quote, $shippingMethod = null)
+    public function saveShippingMethod(Mage_Sales_Model_Quote $quote, ?string $shippingMethod = null): void
     {
         if ($shippingMethod === null) {
             $shippingMethod = Mage::getStoreConfig('payment/pensopay_mobilepay/default_shipping_method');
@@ -96,7 +96,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
 
         $quote->getShippingAddress()
               ->setShippingMethod($shippingMethod)
-              ->setCollectShippingRates(true)
+              ->setCollectShippingRates(1)
               ->collectTotals();
 
         $quote->save();
@@ -105,9 +105,9 @@ class PensoPay_Payment_Model_Type_Mobilepay
     /**
      * Save billing address
      *
-     * @param $request
+     * @return array{error: int, message: mixed}|null
      */
-    public function saveBilling(Mage_Sales_Model_Quote $quote, $request)
+    public function saveBilling(Mage_Sales_Model_Quote $quote, stdClass $request): ?array
     {
         $invoiceAddress = $request->invoice_address;
         $nameParts = explode(' ', $invoiceAddress->name);
@@ -143,7 +143,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
         $addressData    = $addressForm->extractData($addressForm->prepareRequest($data));
         $addressErrors  = $addressForm->validateData($addressData);
 
-        if ($addressErrors !== true) {
+        if (is_array($addressErrors)) {
             Mage::log(var_export(array_values($addressErrors), true), null, 'qp_mpo_addresserror.log');
         }
 
@@ -156,7 +156,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
             }
         }
 
-        $address->setCustomerAddressId(null);
+        $address->setCustomerAddressId(0);
 
         // Additional form data, not fetched by extractData (as it fetches only attributes)
         $address->setSaveInAddressBook(0);
@@ -205,20 +205,19 @@ class PensoPay_Payment_Model_Type_Mobilepay
                              ->setSameAsBilling(1)
                              ->setSaveInAddressBook(0)
                              ->setShippingMethod($shippingMethod)
-                             ->setCollectShippingRates(true);
+                             ->setCollectShippingRates(1);
                     break;
             }
         }
 
         $quote->save();
+        return null;
     }
 
     /**
      * Save shipping address
-     *
-     * @param $request
      */
-    public function saveShipping(Mage_Sales_Model_Quote $quote, $request)
+    public function saveShipping(Mage_Sales_Model_Quote $quote, stdClass $request): void
     {
         $shippingAddress = $request->shipping_address;
         $invoiceAddress = $request->invoice_address;
@@ -261,7 +260,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
         $addressData    = $addressForm->extractData($addressForm->prepareRequest($data));
         $addressErrors  = $addressForm->validateData($addressData);
 
-        if ($addressErrors !== true) {
+        if (is_array($addressErrors)) {
             Mage::log(var_export(array_values($addressErrors), true), null, 'qp_mpo_addresserror.log');
         }
 
@@ -273,24 +272,25 @@ class PensoPay_Payment_Model_Type_Mobilepay
             }
         }
 
-        $address->setCustomerAddressId(null);
+        $address->setCustomerAddressId(0);
         // Additional form data, not fetched by extractData (as it fetches only attributes)
-        $address->setSaveInAddressBook(false);
-        $address->setSameAsBilling(false);
+        $address->setSaveInAddressBook(0);
+        $address->setSameAsBilling(0);
 
         $address->implodeStreetAddress();
-        $address->setCollectShippingRates(true);
+        $address->setCollectShippingRates(1);
     }
 
     /**
      * Validate customer data and set some its data for further usage in quote
      * Will return either true or array with error messages
      *
-     * @return true|array
+     * @param array<string, mixed> $data
+     * @return true|array{error: int, message: string}
      */
-    protected function _validateCustomerData(array $data, Mage_Sales_Model_Quote $quote)
+    protected function _validateCustomerData(array $data, Mage_Sales_Model_Quote $quote): true|array
     {
-        /** @var $customerForm Mage_Customer_Model_Form */
+        /** @var Mage_Customer_Model_Form $customerForm */
         $customerForm = Mage::getModel('customer/form');
         $customerForm->setFormCode('checkout_register')
                      ->setIsAjaxRequest(Mage::app()->getRequest()->isAjax());
@@ -300,7 +300,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
             $customerForm->setEntity($customer);
             $customerData = $quote->getCustomer()->getData();
         } else {
-            /* @var $customer Mage_Customer_Model_Customer */
+            /** @var Mage_Customer_Model_Customer $customer */
             $customer = Mage::getModel('customer/customer');
             $customerForm->setEntity($customer);
             $customerRequest = $customerForm->prepareRequest($data);
@@ -309,7 +309,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
 
         $customerErrors = $customerForm->validateData($customerData);
 
-        if ($customerErrors !== true) {
+        if (is_array($customerErrors)) {
             return [
                 'error'     => -1,
                 'message'   => implode(', ', $customerErrors),

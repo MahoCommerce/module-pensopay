@@ -1,4 +1,5 @@
 <?php
+    /** @var Mage_Core_Block_Template $this */
     /** @var PensoPay_Payment_Helper_Data $pensoHelper */
     $pensoHelper = Mage::helper('pensopay');
 
@@ -6,7 +7,6 @@
     $pensopayCheckoutHelper = Mage::helper('pensopay/checkout');
 
     $store = Mage::app()->getStore();
-//    $paymentData = $pensopayCheckoutHelper->getCoreSession()->getPaymentData(true);
     $paymentData = $pensopayCheckoutHelper->getCoreSession()->getPaymentData();
     if (!empty($paymentData)) {
         $paymentData = Mage::helper('core')->jsonDecode($paymentData);
@@ -14,7 +14,7 @@
 ?>
 <?php if (empty($paymentData)): ?>
     <script type="text/javascript">
-        window.location = '<?php echo $store->getUrl('/'); ?>';
+        window.location = '<?= $store?->getUrl('/'); ?>';
     </script>
 <?php else: ?>
 <?php

@@ -7,9 +7,7 @@ class PensoPay_Payment_Model_Carrier_Shipping extends Mage_Shipping_Model_Carrie
      */
     protected $_code = 'pensopay_mobilepay';
 
-    /**
-     * @return bool|false|Mage_Core_Model_Abstract|Mage_Shipping_Model_Rate_Result|null
-     */
+    #[\Override]
     public function collectRates(Mage_Shipping_Model_Rate_Request $request)
     {
         if (!Mage::getStoreConfig('payment/pensopay_mobilepay_checkout/active', $this->getStore()) || !Mage::app()->getRequest()->getParam('mobilepay')) {
@@ -22,8 +20,9 @@ class PensoPay_Payment_Model_Carrier_Shipping extends Mage_Shipping_Model_Carrie
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
+    #[\Override]
     public function getAllowedMethods()
     {
         return [
@@ -31,26 +30,20 @@ class PensoPay_Payment_Model_Carrier_Shipping extends Mage_Shipping_Model_Carrie
         ];
     }
 
-    /**
-     * @return false|Mage_Core_Model_Abstract
-     */
-    protected function _getDefaultRate()
+    protected function _getDefaultRate(): Mage_Shipping_Model_Rate_Result_Method
     {
         $rate = Mage::getModel('shipping/rate_result_method');
 
         $rate->setCarrier($this->_code);
-        $rate->setCarrierTitle($this->getConfigData('title'));
+        $rate->setCarrierTitle((string) $this->getConfigData('title'));
         $rate->setMethod($this->_code);
-        $rate->setMethodTitle($this->getConfigData('name'));
-        $rate->setPrice($this->getConfigData('price'));
+        $rate->setMethodTitle((string) $this->getConfigData('name'));
+        $rate->setPrice((string) $this->getConfigData('price'));
         $rate->setCost(0);
 
         return $rate;
     }
 
-    /**
-     * @return bool
-     */
     #[\Override]
     public function isTrackingAvailable()
     {
@@ -58,21 +51,9 @@ class PensoPay_Payment_Model_Carrier_Shipping extends Mage_Shipping_Model_Carrie
     }
 
     /**
-     * @return float
+     * @return array<string, string>
      */
-    private function getShippingPrice()
-    {
-        $configPrice = $this->getConfigData('price');
-
-        $shippingPrice = $this->getFinalPriceWithHandlingFee($configPrice);
-
-        return $shippingPrice;
-    }
-
-    /**
-     * @return array
-     */
-    private function getAvailableMethods()
+    private function getAvailableMethods(): array
     {
         return [
             'store_pick_up' => $this->getShipping1Title(),
@@ -85,9 +66,9 @@ class PensoPay_Payment_Model_Carrier_Shipping extends Mage_Shipping_Model_Carrie
     }
 
     /**
-     * @return array
+     * @return array<string, array{title: string, price: string}>
      */
-    public function getMobilePayMethods()
+    public function getMobilePayMethods(): array
     {
         $methods = $this->getAvailableMethods();
         $data = [];
@@ -105,10 +86,9 @@ class PensoPay_Payment_Model_Carrier_Shipping extends Mage_Shipping_Model_Carrie
     }
 
     /**
-     * @param $code
-     * @return array|bool
+     * @return array{title: string, price: string}|false
      */
-    public function getMethodByCode($code)
+    public function getMethodByCode(string $code): array|false
     {
         $methods = $this->getAvailableMethods();
         if (isset($methods[$code])) {
@@ -124,37 +104,37 @@ class PensoPay_Payment_Model_Carrier_Shipping extends Mage_Shipping_Model_Carrie
         return false;
     }
 
-    public function getShipping1Title()
+    public function getShipping1Title(): string
     {
         $title = Mage::getStoreConfig('payment/pensopay_mobilepay_checkout/shipping_store_pick_up_title', $this->getStore());
         return $title ?: Mage::helper('pensopay')->__('Hent i butikken');
     }
 
-    public function getShipping2Title()
+    public function getShipping2Title(): string
     {
         $title = Mage::getStoreConfig('payment/pensopay_mobilepay_checkout/shipping_home_delivery_title', $this->getStore());
         return $title ?: Mage::helper('pensopay')->__('Ordren leveres til din hjemmeadresse');
     }
 
-    public function getShipping3Title()
+    public function getShipping3Title(): string
     {
         $title = Mage::getStoreConfig('payment/pensopay_mobilepay_checkout/shipping_registered_box_title', $this->getStore());
         return $title ?: Mage::helper('pensopay')->__('Afhentning i en pakkeshop (registered_box)');
     }
 
-    public function getShipping4Title()
+    public function getShipping4Title(): string
     {
         $title = Mage::getStoreConfig('payment/pensopay_mobilepay_checkout/shipping_unregistered_box_title', $this->getStore());
         return $title ?: Mage::helper('pensopay')->__('Afhentning i en pakkeshop (unregistered_box)');
     }
 
-    public function getShipping5Title()
+    public function getShipping5Title(): string
     {
         $title = Mage::getStoreConfig('payment/pensopay_mobilepay_checkout/shipping_pick_up_point_title', $this->getStore());
         return $title ?: Mage::helper('pensopay')->__('Afhentning i en pakkeshop (pick_up_point)');
     }
 
-    public function getShipping6Title()
+    public function getShipping6Title(): string
     {
         $title = Mage::getStoreConfig('payment/pensopay_mobilepay_checkout/shipping_own_delivery_title', $this->getStore());
         return $title ?: Mage::helper('pensopay')->__('Ordren leveres til din hjemmeadresse');

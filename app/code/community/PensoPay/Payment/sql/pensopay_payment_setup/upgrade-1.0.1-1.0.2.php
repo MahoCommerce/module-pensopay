@@ -1,6 +1,6 @@
 <?php
 
-/** @var $installer Mage_Api2_Model_Resource_Setup */
+/** @var Mage_Core_Model_Resource_Setup $this */
 $installer = $this;
 
 $installer->startSetup();

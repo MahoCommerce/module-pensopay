@@ -11,10 +11,8 @@ class PensoPay_Payment_Block_Info extends Mage_Payment_Block_Info
 
     /**
      * Get order payment
-     *
-     * @return string
      */
-    public function getPayment()
+    public function getPayment(): ?PensoPay_Payment_Model_Payment
     {
         if ($this->getInfo()->getOrder()) {
             /** @var PensoPay_Payment_Model_Payment $payment */

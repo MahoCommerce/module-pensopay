@@ -16,7 +16,7 @@ class PensoPay_Payment_Block_Form_Vipps extends Mage_Payment_Block_Form
         parent::_construct();
     }
 
-    public function getConfigData($key)
+    public function getConfigData(string $key): mixed
     {
         return $this->getMethod()->getConfigData($key);
     }

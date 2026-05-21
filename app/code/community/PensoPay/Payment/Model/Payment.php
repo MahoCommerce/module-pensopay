@@ -30,7 +30,8 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract
     public const FRAUD_PROBABILITY_HIGH = 'high';
     public const FRAUD_PROBABILITY_NONE = 'none';
 
-    protected $_lastOperation = [];
+    /** @var array<string, mixed> */
+    protected array $_lastOperation = [];
 
     public const STATUS_CODES =
         [
@@ -62,9 +63,9 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract
         $this->_helper = Mage::helper('pensopay');
     }
 
-    public function getDisplayStatus()
+    public function getDisplayStatus(): string
     {
-        $lastCode = $this->getLastCode();
+        $lastCode = (int) $this->getLastCode();
 
         $status = '';
         if ($lastCode == self::STATUS_APPROVED && $this->getLastType() == self::OPERATION_CAPTURE) {
@@ -79,14 +80,14 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract
         return sprintf('%s (%s)', $status, $this->getState());
     }
 
-    public function cancel()
+    public function cancel(): self
     {
         $api = Mage::getModel('pensopay/api');
         $this->importFromRemotePayment($api->cancel($this->getReferenceId()));
         return $this;
     }
 
-    public function getMetadata()
+    public function getMetadata(): array
     {
         if (!empty($this->getData('metadata'))) {
             return Mage::helper('core')->jsonDecode($this->getData('metadata'));
@@ -94,7 +95,10 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract
         return [];
     }
 
-    public function getFirstOperation()
+    /**
+     * @return array<string, mixed>
+     */
+    public function getFirstOperation(): array
     {
         if (!empty($this->getOperations())) {
             $operations = Mage::helper('core')->jsonDecode($this->getOperations());
@@ -112,7 +116,10 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract
         return [];
     }
 
-    public function getLastOperation()
+    /**
+     * @return array<string, mixed>
+     */
+    public function getLastOperation(): array
     {
         if (empty($this->_lastOperation)) {
             if (!empty($this->getOperations())) {
@@ -132,25 +139,22 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract
         return $this->_lastOperation;
     }
 
-    public function getLastMessage()
+    public function getLastMessage(): mixed
     {
-        return $this->getLastOperation()['msg'];
+        return $this->getLastOperation()['msg'] ?? null;
     }
 
-    public function getLastType()
+    public function getLastType(): mixed
     {
-        return $this->getLastOperation()['type'];
+        return $this->getLastOperation()['type'] ?? null;
     }
 
-    public function getLastCode()
+    public function getLastCode(): mixed
     {
-        return $this->getLastOperation()['code'];
+        return $this->getLastOperation()['code'] ?? null;
     }
 
-    /**
-     * @param stdClass $payment
-     */
-    public function importFromRemotePayment($payment)
+    public function importFromRemotePayment(stdClass $payment): void
     {
         if (!Mage::getStoreConfigFlag(PensoPay_Payment_Model_Config::XML_PATH_TESTMODE_ENABLED, $this->getStore()) && $payment->test_mode) {
             $this->setState(self::STATE_REJECTED);
@@ -211,7 +215,7 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract
      *
      * @throws Exception
      */
-    public function updatePaymentRemote()
+    public function updatePaymentRemote(): void
     {
         if (!$this->getId()) {
             throw new Exception($this->_helper->__('Payment not loaded.'));
@@ -229,17 +233,17 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract
         $this->save();
     }
 
-    public function canCapture()
+    public function canCapture(): bool
     {
         return $this->getState() === self::STATE_NEW;
     }
 
-    public function canCancel()
+    public function canCancel(): bool
     {
         return $this->getState() === self::STATE_NEW;
     }
 
-    public function canRefund()
+    public function canRefund(): bool
     {
         return ($this->getState() === self::STATE_PROCESSED && ($this->getAmount() !== $this->getAmountRefunded()));
     }

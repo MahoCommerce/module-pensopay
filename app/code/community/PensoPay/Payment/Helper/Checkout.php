@@ -7,7 +7,7 @@ class PensoPay_Payment_Helper_Checkout extends Mage_Core_Helper_Abstract
      *
      * @return bool True if quote restored successfully, false otherwise
      */
-    public function restoreQuote()
+    public function restoreQuote(): bool
     {
         $order = $this->getCheckoutSession()->getLastRealOrder();
 
@@ -15,7 +15,7 @@ class PensoPay_Payment_Helper_Checkout extends Mage_Core_Helper_Abstract
             $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
             if ($quote->getId()) {
                 $quote->setIsActive(1)
-                    ->setReservedOrderId(null)
+                    ->setData('reserved_order_id', null)
                     ->save();
                 $this->getCheckoutSession()
                     ->replaceQuote($quote)
@@ -28,40 +28,32 @@ class PensoPay_Payment_Helper_Checkout extends Mage_Core_Helper_Abstract
         return false;
     }
 
-    public function getPaymentConfig($value)
+    public function getPaymentConfig(string $value): mixed
     {
         return Mage::getStoreConfig('payment/pensopay/' . $value, Mage::app()->getStore());
     }
 
-    public function isCheckoutIframe()
+    public function isCheckoutIframe(): bool
     {
         $checkoutMethod = Mage::getStoreConfig(PensoPay_Payment_Model_Config::XML_PATH_CHECKOUT_METHOD);
-        if ($checkoutMethod === PensoPay_Payment_Model_System_Config_Source_CheckoutMethods::METHOD_IFRAME) {
-            return true;
-        }
-        return false;
+        return $checkoutMethod === PensoPay_Payment_Model_System_Config_Source_CheckoutMethods::METHOD_IFRAME;
     }
 
-    public function isCheckoutEmbedded()
+    public function isCheckoutEmbedded(): bool
     {
         $checkoutMethod = Mage::getStoreConfig(PensoPay_Payment_Model_Config::XML_PATH_CHECKOUT_METHOD);
-        if ($checkoutMethod === PensoPay_Payment_Model_System_Config_Source_CheckoutMethods::METHOD_EMBEDDED) {
-            return true;
-        }
-        return false;
+        return $checkoutMethod === PensoPay_Payment_Model_System_Config_Source_CheckoutMethods::METHOD_EMBEDDED;
     }
 
     /**
      * Return checkout session
-     *
-     * @return Mage_Checkout_Model_Session
      */
-    public function getCheckoutSession()
+    public function getCheckoutSession(): Mage_Checkout_Model_Session
     {
         return Mage::getSingleton('checkout/session');
     }
 
-    public function getCoreSession()
+    public function getCoreSession(): Mage_Core_Model_Session
     {
         return Mage::getSingleton('core/session');
     }

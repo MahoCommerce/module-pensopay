@@ -2,7 +2,10 @@
 
 class PensoPay_Payment_Model_System_Config_Source_Cardlogos
 {
-    public function toOptionArray()
+    /**
+     * @return array<array{value: string, label: string}>
+     */
+    public function toOptionArray(): array
     {
         return [
             [
@@ -62,15 +65,11 @@ class PensoPay_Payment_Model_System_Config_Source_Cardlogos
 
     /**
      * Get label for card
-     *
-     * @param  string $value
-     *
-     * @return string
      */
-    public function getFrontendLabel($value)
+    public function getFrontendLabel(string $value): string
     {
         foreach ($this->toOptionArray() as $option) {
-            if ($value = $option['value']) {
+            if ($value === $option['value']) {
                 return $option['label'];
             }
         }

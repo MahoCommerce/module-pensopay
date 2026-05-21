@@ -2,10 +2,11 @@
 
 class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Action
 {
-    public function redirectAction()
+    public function redirectAction(): void
     {
         $params = $this->getRequest()->getParams();
         $error = false;
+        $shippingData = false;
 
         if (empty($params['shipping'])) {
             $error = Mage::helper('pensopay')->__('Please specify a shipping method.');
@@ -16,8 +17,10 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
             }
         }
 
-        if ($error) {
-            Mage::getSingleton('core/session')->addError($error);
+        if ($error || !$shippingData) {
+            if ($error) {
+                Mage::getSingleton('core/session')->addError($error);
+            }
             $this->_redirectReferer();
             return;
         }
@@ -40,7 +43,7 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
             }
 
             $defaultValue = 'DNK';
-            $defaultCountry = Mage::getStoreConfig('general/country/default', Mage::app()->getStore()->getStoreId());
+            $defaultCountry = Mage::getStoreConfig('general/country/default', Mage::app()->getStore()?->getStoreId());
 
             $defaultAddress = [
                 'firstname' => $defaultValue,
@@ -59,7 +62,7 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
             $quote->getShippingAddress()->addData($defaultAddress);
 
             $shippingAddress = $quote->getShippingAddress();
-            $shippingAddress->setCollectShippingRates(true)->collectShippingRates()->setShippingMethod('pensopay_mobilepay_pensopay_mobilepay');
+            $shippingAddress->setCollectShippingRates(1)->collectShippingRates()->setShippingMethod('pensopay_mobilepay_pensopay_mobilepay');
 
             // Set Sales Order Payment
             $quote->getPayment()->importData(['method' => 'pensopay_mobilepay']);
@@ -73,7 +76,7 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
             // Create Order From Quote
             $order = $service->getOrder();
 
-            $shippingPrice = $shippingData['price'];
+            $shippingPrice = (float) $shippingData['price'];
             $grandTotal = $order->getGrandTotal() + $shippingPrice;
             $order->setShippingAmount($shippingPrice);
             $order->setBaseShippingAmount($shippingPrice);
@@ -87,9 +90,9 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
             if ($order->getId()) {
                 $session
                     ->setLastRealOrderId($order->getIncrementId())
-                    ->setLastSuccessQuoteId($quote->getId())
-                    ->setLastQuoteId($quote->getId())
-                    ->setLastOrderId($order->getId());
+                    ->setLastSuccessQuoteId((int) $quote->getId())
+                    ->setLastQuoteId((int) $quote->getId())
+                    ->setLastOrderId((int) $order->getId());
             }
 
             $order->setCustomShippingCode($params['shipping']);
@@ -132,10 +135,8 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
 
     /**
      * Retrieve checkout session
-     *
-     * @return Mage_Checkout_Model_Session
      */
-    protected function _getSession()
+    protected function _getSession(): Mage_Checkout_Model_Session
     {
         return Mage::getSingleton('checkout/session');
     }

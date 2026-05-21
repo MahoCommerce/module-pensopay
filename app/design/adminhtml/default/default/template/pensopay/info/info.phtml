@@ -1,1 +1,2 @@
-<p><?php echo $this->htmlEscape($this->getMethod()->getTitle()) ?></p>
+<?php /** @var PensoPay_Payment_Block_Info $this */ ?>
+<p><?= $this->escapeHtmlAsObject($this->getMethod()->getTitle()) ?></p>
