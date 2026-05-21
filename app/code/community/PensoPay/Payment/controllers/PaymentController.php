@@ -130,7 +130,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
             $order = Mage::getModel('sales/order')->load($orderId);
             $checkoutSession->setLastSuccessQuoteId($order->getQuoteId());
             $checkoutSession->setLastQuoteId($order->getQuoteId());
-            $checkoutSession->setLastRealOrderId((string) $order->getId());
+            $checkoutSession->setLastRealOrderId($order->getIncrementId());
             $checkoutSession->setLastOrderId((int) $order->getId());
         } else {
             $order = $pensopayCheckoutHelper->getCheckoutSession()->getLastRealOrder();
@@ -186,6 +186,9 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
             return;
         }
         $request = Mage::helper('core')->jsonDecode($requestBody, false);
+        if (!$request instanceof stdClass) {
+            return;
+        }
 
         $checksum = hash_hmac('sha256', $requestBody, $this->getPrivateKey());
 
@@ -244,7 +247,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                 && $paymentModel->getLastCode() == PensoPay_Payment_Model_Payment::STATUS_APPROVED
                 && !$paymentModel->getIsVirtualterminal()) {
                 try {
-                    if ($request->facilitator == 'mobilepay' && isset($request->variables->mobilepay_address) && $request instanceof stdClass) {
+                    if ($request->facilitator == 'mobilepay' && isset($request->variables->mobilepay_address)) {
                         $updatedOrder = $this->updateOrderByCallback($order, $request);
                         if ($updatedOrder) {
                             $order = $updatedOrder;

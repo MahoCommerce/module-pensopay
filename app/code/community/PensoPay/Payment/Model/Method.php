@@ -58,15 +58,16 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
 
     /**
      * Set order status to pending
+     *
+     * @param string $paymentAction
+     * @param \Maho\DataObject $stateObject
      */
     #[\Override]
     public function initialize($paymentAction, $stateObject)
     {
-        if ($stateObject instanceof \Maho\DataObject) {
-            $stateObject->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT);
-            $stateObject->setStatus('pending');
-            $stateObject->setIsNotified(false);
-        }
+        $stateObject->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT);
+        $stateObject->setStatus('pending');
+        $stateObject->setIsNotified(false);
 
         return parent::initialize($paymentAction, $stateObject);
     }
