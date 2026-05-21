@@ -1,6 +1,7 @@
 <?php
 
-class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Adminhtml_Block_Widget_Form {
+class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
+{
     /** @var PensoPay_Payment_Helper_Data $_helper */
     protected $_helper;
 
@@ -12,6 +13,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
         $this->setTitle($this->_helper->__('New Payment'));
     }
 
+    #[\Override]
     protected function _prepareForm()
     {
         $form = new \Maho\Data\Form();
@@ -23,7 +25,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
             'title'                 => $this->_helper->__('Order ID'),
             'name'                  => 'order_id',
             'class'                 => 'validate-length maximum-length-20 minimum-length-4',
-            'required'              => true
+            'required'              => true,
         ]);
 
         $amount = $paymentFieldset->addField('amount', 'text', [
@@ -31,7 +33,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
             'title'                 => $this->_helper->__('Amount'),
             'name'                  => 'amount',
             'required'              => true,
-            'class'                 => 'validate-number'
+            'class'                 => 'validate-number',
         ]);
 
         $countrySelect = $paymentFieldset->addField('locale_code', 'select', [
@@ -41,7 +43,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
             'required'              => true,
             'options'               => $this->_getAllLocales(),
             'value'                 => 'da_DK',
-            'after_element_html'    => sprintf('<p style="font-size:11px">%s</p>', $this->_helper->__('Used as payment language'))
+            'after_element_html'    => sprintf('<p style="font-size:11px">%s</p>', $this->_helper->__('Used as payment language')),
         ]);
 
         $currencySelect = $paymentFieldset->addField('currency_code', 'select', [
@@ -51,7 +53,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
             'required'              => true,
             'options'               => $this->_getAllCurrencies(),
             'value'                 => 'DKK',
-            'after_element_html'    => sprintf('<p style="font-size:11px">%s</p>', $this->_helper->__('Payment currency code'))
+            'after_element_html'    => sprintf('<p style="font-size:11px">%s</p>', $this->_helper->__('Payment currency code')),
         ]);
 
         $captureSelect = $paymentFieldset->addField('autocapture', 'select', [
@@ -61,7 +63,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
             'required'              => true,
             'options'               => [0 => $this->_helper->__('No'), 1 => $this->_helper->__('Yes')],
             'value'                 => Mage::getStoreConfigFlag('payment/pensopay/auto_capture'),
-            'after_element_html'    => sprintf('<p style="font-size:11px">%s</p>', $this->_helper->__('Capture payment immediately.'))
+            'after_element_html'    => sprintf('<p style="font-size:11px">%s</p>', $this->_helper->__('Capture payment immediately.')),
         ]);
 
         $autofeeSelect = $paymentFieldset->addField('autofee', 'select', [
@@ -71,7 +73,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
             'required'              => true,
             'options'               => [0 => $this->_helper->__('No'), 1 => $this->_helper->__('Yes')],
             'value'                 => Mage::getStoreConfigFlag('payment/pensopay/auto_fee'),
-            'after_element_html'    => sprintf('<p style="font-size:11px">%s</p>', $this->_helper->__('Charge transaction fee.'))
+            'after_element_html'    => sprintf('<p style="font-size:11px">%s</p>', $this->_helper->__('Charge transaction fee.')),
         ]);
 
         $customerFieldset = $form->addFieldset('customer_fieldset', ['legend' => $this->_helper->__('Customer Information')]);
@@ -80,7 +82,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
             'label'                 => $this->_helper->__('Name'),
             'title'                 => $this->_helper->__('Name'),
             'name'                  => 'customer_name',
-            'required'              => false
+            'required'              => false,
         ]);
 
         $email = $customerFieldset->addField('customer_email', 'text', [
@@ -88,7 +90,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
             'title'                 => $this->_helper->__('Email'),
             'name'                  => 'customer_email',
             'class'                 => 'validate-email',
-            'required'              => false
+            'required'              => false,
         ]);
 
         $street = $customerFieldset->addField('customer_street', 'text', [
@@ -102,14 +104,14 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
             'label'                 => $this->_helper->__('Zip Code'),
             'title'                 => $this->_helper->__('Zip Code'),
             'name'                  => 'customer_zipcode',
-            'required'              => false
+            'required'              => false,
         ]);
 
         $city = $customerFieldset->addField('customer_city', 'text', [
             'label'                 => $this->_helper->__('City'),
             'title'                 => $this->_helper->__('City'),
             'name'                  => 'customer_zipcode',
-            'required'              => false
+            'required'              => false,
         ]);
 
         $form->setUseContainer(true);
@@ -140,7 +142,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
                     'title'                 => $this->_helper->__('Increment ID'),
                     'name'                  => 'id',
                     'value'                 => $id,
-                    'required'              => true
+                    'required'              => true,
                 ], 'order_id');
 
                 $paymentFieldset->addType('payment_state', 'PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Renderer_Status');
@@ -149,7 +151,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
                     'title'                 => $this->_helper->__('State'),
                     'name'                  => 'state',
                     'required'              => true,
-                    'value'                 => $payment->getId()
+                    'value'                 => $payment->getId(),
                 ], 'id');
 
                 $transactionLogFieldset = $form->addFieldset('log_fieldset', ['legend' => $this->_helper->__('Transaction Log')]);
@@ -158,7 +160,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
                 $transactionLog = $transactionLogFieldset->addField('transaction_log', 'operations', [
                     'name'                  => 'operations',
                     'value'                 => $payment->getOperations(),
-                    'required'              => false
+                    'required'              => false,
                 ]);
             }
         }

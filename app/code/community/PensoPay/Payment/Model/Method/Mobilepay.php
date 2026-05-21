@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 class PensoPay_Payment_Model_Method_Mobilepay extends PensoPay_Payment_Model_Method
 {
     protected $_code = 'pensopay_mobilepay';
@@ -10,6 +12,7 @@ class PensoPay_Payment_Model_Method_Mobilepay extends PensoPay_Payment_Model_Met
      *
      * @return mixed
      */
+    #[\Override]
     public function getPaymentMethods()
     {
         return 'mobilepay';

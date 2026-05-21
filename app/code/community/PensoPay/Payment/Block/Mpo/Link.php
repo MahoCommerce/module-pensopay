@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 class PensoPay_Payment_Block_Mpo_Link extends Mage_Core_Block_Template
 {
     /**
@@ -7,7 +9,7 @@ class PensoPay_Payment_Block_Mpo_Link extends Mage_Core_Block_Template
      */
     public function isMobilePayCheckoutEnabled()
     {
-    	return false;
+        return false;
     }
 
     /**

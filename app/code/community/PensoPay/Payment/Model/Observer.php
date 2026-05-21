@@ -4,8 +4,6 @@ class PensoPay_Payment_Model_Observer
 {
     /**
      * Check for feed updates
-     *
-     * @param \Maho\Event\Observer $observer
      */
     public function controllerActionPredispatch(\Maho\Event\Observer $observer)
     {
@@ -20,28 +18,27 @@ class PensoPay_Payment_Model_Observer
     /**
      * Add fraud probability to order grid
      *
-     * @param  \Maho\Event\Observer $observer
      * @return $this
      */
     public function onBlockHtmlBefore(\Maho\Event\Observer $observer)
     {
         $block = $observer->getEvent()->getBlock();
 
-        if (! isset($block)) return;
+        if (! isset($block)) {
+            return;
+        }
 
         if ($block->getType() === 'adminhtml/sales_order_grid') {
             $massAction = $block->getMassactionBlock();
             $massAction->addItem('pensopay_mass_capture', [
                 'label' => 'Capture with PensoPay',
-                'url' => $block->getUrl('adminhtml/pensopay/orderMassCapture')
+                'url' => $block->getUrl('adminhtml/pensopay/orderMassCapture'),
             ]);
         }
     }
 
     /**
      * Disable stock subtraction if configured to do so
-     *
-     * @param \Maho\Event\Observer $observer
      */
     public function checkoutTypeOnepageSaveOrder(\Maho\Event\Observer $observer)
     {
@@ -102,7 +99,7 @@ class PensoPay_Payment_Model_Observer
                 $html .= $viabillTagBlock->toHtml();
                 $transport->setHtml($html);
                 $block->setViabillSet(true);
-            } else if ($block instanceof Mage_Tax_Block_Checkout_Grandtotal) {
+            } elseif ($block instanceof Mage_Tax_Block_Checkout_Grandtotal) {
                 /** @var Mage_Core_Block_Template $viabillTagBlock */
                 $viabillTagBlock = $layout->createBlock('core/template');
                 $viabillTagBlock->setTemplate('pensopay/viabill-basket.phtml');
@@ -150,7 +147,8 @@ class PensoPay_Payment_Model_Observer
                 if ($paymentModel->canCancel()) {
                     try {
                         $paymentModel->cancel();
-                    } catch (Exception $e) {}
+                    } catch (Exception $e) {
+                    }
                 }
             }
         }
@@ -173,7 +171,7 @@ class PensoPay_Payment_Model_Observer
         $collection->getSelect()->join(
             ['payments' => $collection->getTable('sales/order_payment')],
             'payments.parent_id = main_table.entity_id',
-            'method'
+            'method',
         );
         $collection->addFieldToFilter('method', ['like' => 'pensopay%']);
         $collection->getSelect()->where('HOUR(TIMEDIFF(NOW(), created_at)) >= 24');
@@ -182,14 +180,20 @@ class PensoPay_Payment_Model_Observer
             try {
                 if ($order->canCancel()) {
                     $order->cancel()->save();
-                    Mage::log('CRON: Canceled old order #' . $order->getIncrementId(), Mage::LOG_WARNING,
-                        PensoPay_Payment_Helper_Data::LOG_FILENAME);
+                    Mage::log(
+                        'CRON: Canceled old order #' . $order->getIncrementId(),
+                        Mage::LOG_WARNING,
+                        PensoPay_Payment_Helper_Data::LOG_FILENAME,
+                    );
                 } else {
                     throw new Exception('Order is in a non-cancellable state.');
                 }
             } catch (Exception $e) {
-                Mage::log('CRON: Could not cancel old order #' . $order->getIncrementId() . ' Exception: ' . $e->getMessage(),
-                    Mage::LOG_WARNING, PensoPay_Payment_Helper_Data::LOG_FILENAME);
+                Mage::log(
+                    'CRON: Could not cancel old order #' . $order->getIncrementId() . ' Exception: ' . $e->getMessage(),
+                    Mage::LOG_WARNING,
+                    PensoPay_Payment_Helper_Data::LOG_FILENAME,
+                );
             }
         }
         return $this;
@@ -234,8 +238,9 @@ class PensoPay_Payment_Model_Observer
             $helper->sendEmail(
                 $order->getBillingAddress()->getEmail(),
                 $order->getBillingAddress()->getFirstname() . ' ' . $order->getBillingAddress()->getLastname(),
-                $order->getTotalDue(), $order->getOrderCurrencyCode(),
-                $truePaymentLink
+                $order->getTotalDue(),
+                $order->getOrderCurrencyCode(),
+                $truePaymentLink,
             );
         }
     }

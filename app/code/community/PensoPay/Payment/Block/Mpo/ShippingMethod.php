@@ -1,4 +1,5 @@
 <?php
+
 class PensoPay_Payment_Block_Mpo_ShippingMethod extends Mage_Checkout_Block_Onepage_Shipping_Method_Available
 {
     /**

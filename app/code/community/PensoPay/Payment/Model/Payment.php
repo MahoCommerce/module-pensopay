@@ -1,58 +1,59 @@
 <?php
 
-class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract {
-    /** @var PensoPay_Payment_Helper_Data $_helper*/
+class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract
+{
+    /** @var PensoPay_Payment_Helper_Data $_helper */
     protected $_helper;
 
-    const STATE_INITIAL = 'initial';
-    const STATE_NEW     = 'new';
-    const STATE_PROCESSED = 'processed';
-    const STATE_PENDING = 'pending';
-    const STATE_REJECTED = 'rejected';
+    public const STATE_INITIAL = 'initial';
+    public const STATE_NEW     = 'new';
+    public const STATE_PROCESSED = 'processed';
+    public const STATE_PENDING = 'pending';
+    public const STATE_REJECTED = 'rejected';
 
-    const STATUS_APPROVED = 20000;
-    const STATUS_WAITING_APPROVAL = 20200;
-    const STATUS_3D_SECURE_REQUIRED = 30100;
-    const STATUS_REJECTED_BY_ACQUIRER = 40000;
-    const STATUS_REQUEST_DATA_ERROR = 40001;
-    const STATUS_AUTHORIZATION_EXPIRED = 40002;
-    const STATUS_ABORTED = 40003;
-    const STATUS_GATEWAY_ERROR = 50000;
-    const COMMUNICATIONS_ERROR_ACQUIRER = 50300;
+    public const STATUS_APPROVED = 20000;
+    public const STATUS_WAITING_APPROVAL = 20200;
+    public const STATUS_3D_SECURE_REQUIRED = 30100;
+    public const STATUS_REJECTED_BY_ACQUIRER = 40000;
+    public const STATUS_REQUEST_DATA_ERROR = 40001;
+    public const STATUS_AUTHORIZATION_EXPIRED = 40002;
+    public const STATUS_ABORTED = 40003;
+    public const STATUS_GATEWAY_ERROR = 50000;
+    public const COMMUNICATIONS_ERROR_ACQUIRER = 50300;
 
-    const OPERATION_CAPTURE = 'capture';
-    const OPERATION_AUTHORIZE = 'authorize';
-    const OPERATION_CANCEL = 'cancel';
-    const OPERATION_REFUND = 'refund';
-    const OPERATION_MOBILEPAY_SESSION = 'session';
+    public const OPERATION_CAPTURE = 'capture';
+    public const OPERATION_AUTHORIZE = 'authorize';
+    public const OPERATION_CANCEL = 'cancel';
+    public const OPERATION_REFUND = 'refund';
+    public const OPERATION_MOBILEPAY_SESSION = 'session';
 
-    const FRAUD_PROBABILITY_HIGH = 'high';
-    const FRAUD_PROBABILITY_NONE = 'none';
+    public const FRAUD_PROBABILITY_HIGH = 'high';
+    public const FRAUD_PROBABILITY_NONE = 'none';
 
     protected $_lastOperation = [];
 
-    const STATUS_CODES =
-    [
-        self::STATUS_APPROVED => 'Approved',
-        self::STATUS_WAITING_APPROVAL => 'Waiting approval',
-        self::STATUS_3D_SECURE_REQUIRED => '3D Secure is required',
-        self::STATUS_REJECTED_BY_ACQUIRER => 'Rejected By Acquirer',
-        self::STATUS_REQUEST_DATA_ERROR => 'Request Data Error',
-        self::STATUS_AUTHORIZATION_EXPIRED => 'Authorization expired',
-        self::STATUS_ABORTED => 'Aborted',
-        self::STATUS_GATEWAY_ERROR => 'Gateway Error',
-        self::COMMUNICATIONS_ERROR_ACQUIRER => 'Communications Error (with Acquirer)'
-    ];
+    public const STATUS_CODES =
+        [
+            self::STATUS_APPROVED => 'Approved',
+            self::STATUS_WAITING_APPROVAL => 'Waiting approval',
+            self::STATUS_3D_SECURE_REQUIRED => '3D Secure is required',
+            self::STATUS_REJECTED_BY_ACQUIRER => 'Rejected By Acquirer',
+            self::STATUS_REQUEST_DATA_ERROR => 'Request Data Error',
+            self::STATUS_AUTHORIZATION_EXPIRED => 'Authorization expired',
+            self::STATUS_ABORTED => 'Aborted',
+            self::STATUS_GATEWAY_ERROR => 'Gateway Error',
+            self::COMMUNICATIONS_ERROR_ACQUIRER => 'Communications Error (with Acquirer)',
+        ];
 
     /**
      * States in which the payment can't be updated anymore
      * Used for cron.
      */
-    const FINALIZED_STATES =
-    [
-        self::STATE_REJECTED,
-        self::STATE_PROCESSED
-    ];
+    public const FINALIZED_STATES =
+        [
+            self::STATE_REJECTED,
+            self::STATE_PROCESSED,
+        ];
 
     public function __construct()
     {
@@ -68,11 +69,11 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract {
         $status = '';
         if ($lastCode == self::STATUS_APPROVED && $this->getLastType() == self::OPERATION_CAPTURE) {
             $status = $this->_helper->__('Captured');
-        } else if ($lastCode == self::STATUS_APPROVED && $this->getLastType() == self::OPERATION_CANCEL) {
+        } elseif ($lastCode == self::STATUS_APPROVED && $this->getLastType() == self::OPERATION_CANCEL) {
             $status = $this->_helper->__('Cancelled');
-        } else if ($lastCode == self::STATUS_APPROVED && $this->getLastType() == self::OPERATION_REFUND) {
+        } elseif ($lastCode == self::STATUS_APPROVED && $this->getLastType() == self::OPERATION_REFUND) {
             $status = $this->_helper->__('Refunded');
-        } else if (!empty(self::STATUS_CODES[$lastCode])) {
+        } elseif (!empty(self::STATUS_CODES[$lastCode])) {
             $status = self::STATUS_CODES[$lastCode];
         }
         return sprintf('%s (%s)', $status, $this->getState());
@@ -103,7 +104,7 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract {
                     return [
                         'type' => $firstOp['type'],
                         'code' => $firstOp['qp_status_code'],
-                        'msg'  => $firstOp['qp_status_msg']
+                        'msg'  => $firstOp['qp_status_msg'],
                     ];
                 }
             }
@@ -122,7 +123,7 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract {
                         $this->_lastOperation = [
                             'type' => $lastOp['type'],
                             'code' => $lastOp['qp_status_code'],
-                            'msg'  => $lastOp['qp_status_msg']
+                            'msg'  => $lastOp['qp_status_msg'],
                         ];
                     }
                 }
@@ -183,7 +184,7 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract {
             foreach ($payment->operations as $operation) {
                 if ($operation->type == 'capture') {
                     $amountCaptured += $operation->amount;
-                } else if ($operation->type == 'refund') {
+                } elseif ($operation->type == 'refund') {
                     $amountRefunded += $operation->amount;
                 }
             }
@@ -194,9 +195,9 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract {
         /** @var Mage_Sales_Model_Order $order */
         $order = Mage::getModel('sales/order')->loadByIncrementId($this->getOrderId());
         if ($order->getId() && in_array($this->getLastType(), [
-                self::OPERATION_AUTHORIZE,
-                self::OPERATION_CAPTURE
-            ], true) && $this->getLastCode() == self::STATUS_APPROVED) {
+            self::OPERATION_AUTHORIZE,
+            self::OPERATION_CAPTURE,
+        ], true) && $this->getLastCode() == self::STATUS_APPROVED) {
             $status = Mage::getStoreConfig(PensoPay_Payment_Model_Config::XML_PATH_ORDER_STATUS_AFTERPAYMENT);
             if ($order->getStatus() != $status) {
                 $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING, $status);

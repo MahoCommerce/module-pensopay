@@ -13,19 +13,18 @@ class PensoPay_Payment_Model_System_Config_Source_Afterstatus
     {
         if ($this->_stateStatuses) {
             $statuses = Mage::getSingleton('sales/order_config')->getStateStatuses($this->_stateStatuses);
-        }
-        else {
+        } else {
             $statuses = Mage::getSingleton('sales/order_config')->getStatuses();
         }
         $options = [];
         $options[] = [
             'value' => '',
-            'label' => Mage::helper('adminhtml')->__('-- Please Select --')
+            'label' => Mage::helper('adminhtml')->__('-- Please Select --'),
         ];
-        foreach ($statuses as $code=>$label) {
+        foreach ($statuses as $code => $label) {
             $options[] = [
                 'value' => $code,
-                'label' => $label
+                'label' => $label,
             ];
         }
         return $options;

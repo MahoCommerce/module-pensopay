@@ -63,6 +63,7 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
      * @param object $stateObject
      * @return Mage_Payment_Model_Abstract
      */
+    #[\Override]
     public function initialize($paymentAction, $stateObject)
     {
         $stateObject->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT);
@@ -78,11 +79,11 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
     }
 
     /**
-     * @param \Maho\DataObject $payment
      * @param float $amount
      * @return $this|Mage_Payment_Model_Abstract
      * @throws Exception
      */
+    #[\Override]
     public function capture(\Maho\DataObject $payment, $amount)
     {
         if ($payment->getInfoInstance()) {
@@ -93,8 +94,9 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
 
         /** @var PensoPay_Payment_Model_Payment $payment */
         $payment = Mage::getModel('pensopay/payment')->load($order->getIncrementId(), 'order_id');
-        if (!$payment->getId())
+        if (!$payment->getId()) {
             throw new Exception($this->_helper->__('Payment not found.'));
+        }
 
         $amountCaptured = $payment->getAmountCaptured();
         if ($payment->getAmount() < ($amountCaptured + $amount)) {
@@ -122,19 +124,20 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
             $payment->save();
             $order->save();
 
-            if (isset($e))
-                throw $e; //rethrow it
+            if (isset($e)) {
+                throw $e;
+            } //rethrow it
         }
 
         return $this;
     }
 
     /**
-     * @param \Maho\DataObject $payment
      * @param float $amount
      * @return $this|Mage_Payment_Model_Abstract
      * @throws Exception
      */
+    #[\Override]
     public function refund(\Maho\DataObject $payment, $amount)
     {
         /** @var Mage_Sales_Model_Order $order */
@@ -142,8 +145,9 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
 
         /** @var PensoPay_Payment_Model_Payment $payment */
         $payment = Mage::getModel('pensopay/payment')->load($order->getIncrementId(), 'order_id');
-        if (!$payment->getId())
+        if (!$payment->getId()) {
             throw new Exception($this->_helper->__('Payment not found.'));
+        }
 
         $amountRefunded = $payment->getAmountRefunded();
         if ($payment->getAmount() < ($amountRefunded + $amount)) {
@@ -170,8 +174,9 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
             $payment->save();
             $order->save();
 
-            if (isset($e))
-                throw $e; //rethrow it
+            if (isset($e)) {
+                throw $e;
+            } //rethrow it
         }
 
         return $this;

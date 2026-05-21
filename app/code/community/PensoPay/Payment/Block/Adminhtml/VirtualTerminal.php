@@ -1,6 +1,7 @@
 <?php
 
-class PensoPay_Payment_Block_Adminhtml_Virtualterminal extends Mage_Adminhtml_Block_Widget_Grid_Container {
+class PensoPay_Payment_Block_Adminhtml_Virtualterminal extends Mage_Adminhtml_Block_Widget_Grid_Container
+{
     public function __construct()
     {
         parent::__construct();
@@ -10,19 +11,21 @@ class PensoPay_Payment_Block_Adminhtml_Virtualterminal extends Mage_Adminhtml_Bl
         $this->_addButtonLabel = $this->__('Create Payment');
         $this->_addButton('edit', [
             'label'     => $this->getAddButtonLabel(),
-            'onclick'   => 'setLocation(\'' . $this->getCreateUrl() .'\')',
+            'onclick'   => 'setLocation(\'' . $this->getCreateUrl() . '\')',
             'class'     => 'add',
         ]);
     }
 
+    #[\Override]
     public function getCreateUrl()
     {
         return $this->getUrl('*/*/edit');
     }
 
-    public function _toHtml()
+    #[\Override]
+    protected function _toHtml()
     {
-        $html = "";
+        $html = '';
         $session = Mage::getSingleton('adminhtml/session');
         if ($session->getPaymentLink()) {
             $paymentBlock = $this->getChild('payment_additional');
@@ -34,7 +37,9 @@ class PensoPay_Payment_Block_Adminhtml_Virtualterminal extends Mage_Adminhtml_Bl
         return $html;
     }
 
-    public function _construct() {
+    #[\Override]
+    protected function _construct()
+    {
         $this->_blockGroup = 'pensopay';
         $this->_controller = 'adminhtml_virtualTerminal';
         $this->_headerText = $this->__('PensoPay Payments');

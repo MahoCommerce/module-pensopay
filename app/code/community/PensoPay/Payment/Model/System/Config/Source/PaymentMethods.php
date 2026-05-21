@@ -1,8 +1,9 @@
 <?php
+
 class PensoPay_Payment_Model_System_Config_Source_PaymentMethods
 {
-    const METHOD_SPECIFIED = 'specified';
-    const METHOD_CREDITCARDS = 'creditcard';
+    public const METHOD_SPECIFIED = 'specified';
+    public const METHOD_CREDITCARDS = 'creditcard';
 
     /**
      * Get available payment methods
@@ -14,15 +15,15 @@ class PensoPay_Payment_Model_System_Config_Source_PaymentMethods
         return [
             [
                 'value' => '',
-                'label' => Mage::helper('pensopay')->__('All Payment Methods')
+                'label' => Mage::helper('pensopay')->__('All Payment Methods'),
             ],
             [
                 'value' => self::METHOD_CREDITCARDS,
-                'label' => Mage::helper('pensopay')->__('All Credit Cards')
+                'label' => Mage::helper('pensopay')->__('All Credit Cards'),
             ],
             [
                 'value' => self::METHOD_SPECIFIED,
-                'label' => Mage::helper('pensopay')->__('As Specified')
+                'label' => Mage::helper('pensopay')->__('As Specified'),
             ],
         ];
     }

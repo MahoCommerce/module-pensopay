@@ -1,7 +1,9 @@
 <?php
+
 class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Action
 {
-    public function redirectAction() {
+    public function redirectAction()
+    {
         $params = $this->getRequest()->getParams();
         $error = false;
 
@@ -50,7 +52,7 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
                 'postcode' => $defaultValue,
                 'telephone' => $defaultValue,
                 'vat_id' => '',
-                'save_in_address_book' => 0
+                'save_in_address_book' => 0,
             ];
 
             $quote->getBillingAddress()->addData($defaultAddress);
@@ -75,7 +77,7 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
             $grandTotal = $order->getGrandTotal() + $shippingPrice;
             $order->setShippingAmount($shippingPrice);
             $order->setBaseShippingAmount($shippingPrice);
-            $order->setShippingDescription('MobilePay - '.$shippingData['title']);
+            $order->setShippingDescription('MobilePay - ' . $shippingData['title']);
             $order->setGrandTotal($grandTotal);
             $order->setBaseGrandTotal($grandTotal);
             $order->save();

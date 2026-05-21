@@ -5,14 +5,15 @@ class PensoPay_Payment_Model_Api
     /**
      * @var string
      */
-    protected $baseurl = "https://api.quickpay.net";
+    protected $baseurl = 'https://api.quickpay.net';
 
     /**
      * @param $request
      * @param Mage_Sales_Model_Order $order
      * @throws Mage_Core_Exception
      */
-    protected function _setupRequest(&$request, $order) {
+    protected function _setupRequest(&$request, $order)
+    {
         $request->setOrderId($order->getIncrementId());
         $request->setCurrency($order->getOrderCurrencyCode());
 
@@ -25,7 +26,7 @@ class PensoPay_Payment_Model_Api
         }
 
         $request->setVariables([
-            'order_id' => $order->getId()
+            'order_id' => $order->getId(),
         ]);
 
         if (!$order->getIsVirtualTerminal()) {
@@ -100,7 +101,7 @@ class PensoPay_Payment_Model_Api
                 $shipping['method'] = $order->getCustomShippingCode();
             }
 
-            $shipping['amount'] = (int)($order->getShippingInclTax() * 100);
+            $shipping['amount'] = (int) ($order->getShippingInclTax() * 100);
 
             $request->setShipping($shipping);
         } else { //Order is from virtual terminal
@@ -111,7 +112,7 @@ class PensoPay_Payment_Model_Api
                     'item_name'  => 'Products',
                     'item_price' => $order->getGrandTotal(),
                     'vat_rate'   => 0.25, //TODO
-                ]
+                ],
             ];
         }
 
@@ -121,7 +122,6 @@ class PensoPay_Payment_Model_Api
     /**
      * Create payment for order
      *
-     * @param Mage_Sales_Model_Order $order
      * @return mixed
      * @throws Mage_Core_Exception
      */
@@ -144,7 +144,6 @@ class PensoPay_Payment_Model_Api
     /**
      * Update payment
      *
-     * @param Mage_Sales_Model_Order $order
      * @return mixed
      * @throws Mage_Core_Exception
      */
@@ -199,7 +198,6 @@ class PensoPay_Payment_Model_Api
     /**
      * Create payment link
      *
-     * @param Mage_Sales_Model_Order $order
      * @param $paymentId
      * @return mixed
      * @throws Mage_Core_Exception
@@ -387,17 +385,13 @@ class PensoPay_Payment_Model_Api
     {
         $languageMap = [
             'nb' => 'no',
-            'nn' => 'no'
+            'nn' => 'no',
         ];
 
         $parts = explode('_', $locale);
         $language = $parts[0];
 
-        if (isset($languageMap[$language])) {
-            return $languageMap[$language];
-        }
-
-        return $language;
+        return $languageMap[$language] ?? $language;
     }
 
     /**

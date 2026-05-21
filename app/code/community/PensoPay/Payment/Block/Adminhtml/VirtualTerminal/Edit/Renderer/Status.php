@@ -2,6 +2,7 @@
 
 class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Renderer_Status extends \Maho\Data\Form\Element\AbstractElement
 {
+    #[\Override]
     public function getElementHtml()
     {
         /** @var PensoPay_Payment_Helper_Data $helper */

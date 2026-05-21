@@ -45,8 +45,8 @@ class PensoPay_Payment_Model_Type_Mobilepay
 
         //Set dummy address to include shipping cost
         $this->getQuote()->getShippingAddress()
-             ->setCountryId("DK")
-             ->setPostcode("9000");
+             ->setCountryId('DK')
+             ->setPostcode('9000');
         $this->getQuote()->getShippingAddress()->collectTotals();
         $this->getQuote()->getShippingAddress()->setCollectShippingRates(true);
         $this->getQuote()->getShippingAddress()->collectShippingRates();
@@ -56,8 +56,6 @@ class PensoPay_Payment_Model_Type_Mobilepay
 
     /**
      * Save payment method on quote
-     *
-     * @param Mage_Sales_Model_Quote $quote
      */
     public function savePayment(Mage_Sales_Model_Quote $quote)
     {
@@ -83,8 +81,6 @@ class PensoPay_Payment_Model_Type_Mobilepay
 
     /**
      * Save shipping method on quote
-     *
-     * @param Mage_Sales_Model_Quote $quote
      */
     public function saveShippingMethod(Mage_Sales_Model_Quote $quote, $shippingMethod = null)
     {
@@ -109,7 +105,6 @@ class PensoPay_Payment_Model_Type_Mobilepay
     /**
      * Save billing address
      *
-     * @param Mage_Sales_Model_Quote $quote
      * @param $request
      */
     public function saveBilling(Mage_Sales_Model_Quote $quote, $request)
@@ -122,7 +117,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
             'lastname' => join(' ', $nameParts),
             'email' => $invoiceAddress->email,
             'street' => [
-                $invoiceAddress->street . " " . $invoiceAddress->house_number . $invoiceAddress->house_extension
+                $invoiceAddress->street . ' ' . $invoiceAddress->house_number . $invoiceAddress->house_extension,
             ],
             'city' => $invoiceAddress->city,
             'postcode' => $invoiceAddress->zip_code,
@@ -157,7 +152,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
         //unset billing address attributes which were not shown in form
         foreach ($addressForm->getAttributes() as $attribute) {
             if (!isset($data[$attribute->getAttributeCode()])) {
-                $address->setData($attribute->getAttributeCode(), null);
+                $address->setData($attribute->getAttributeCode());
             }
         }
 
@@ -221,7 +216,6 @@ class PensoPay_Payment_Model_Type_Mobilepay
     /**
      * Save shipping address
      *
-     * @param Mage_Sales_Model_Quote $quote
      * @param $request
      */
     public function saveShipping(Mage_Sales_Model_Quote $quote, $request)
@@ -235,7 +229,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
             'lastname' => join(' ', $nameParts),
             'email' => $shippingAddress->email,
             'street' => [
-                $shippingAddress->street . " " . $shippingAddress->house_number . $shippingAddress->house_extension
+                $shippingAddress->street . ' ' . $shippingAddress->house_number . $shippingAddress->house_extension,
             ],
             'city' => $shippingAddress->city,
             'postcode' => $shippingAddress->zip_code,
@@ -275,7 +269,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
         // unset shipping address attributes which were not shown in form
         foreach ($addressForm->getAttributes() as $attribute) {
             if (!isset($data[$attribute->getAttributeCode()])) {
-                $address->setData($attribute->getAttributeCode(), null);
+                $address->setData($attribute->getAttributeCode());
             }
         }
 
@@ -292,7 +286,6 @@ class PensoPay_Payment_Model_Type_Mobilepay
      * Validate customer data and set some its data for further usage in quote
      * Will return either true or array with error messages
      *
-     * @param array $data
      * @return true|array
      */
     protected function _validateCustomerData(array $data, Mage_Sales_Model_Quote $quote)
@@ -319,7 +312,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
         if ($customerErrors !== true) {
             return [
                 'error'     => -1,
-                'message'   => implode(', ', $customerErrors)
+                'message'   => implode(', ', $customerErrors),
             ];
         }
 
@@ -341,7 +334,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
         if (true !== $result && is_array($result)) {
             return [
                 'error'   => -1,
-                'message' => implode(', ', $result)
+                'message' => implode(', ', $result),
             ];
         }
 

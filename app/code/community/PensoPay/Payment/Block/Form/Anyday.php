@@ -9,6 +9,7 @@ class PensoPay_Payment_Block_Form_Anyday extends Mage_Payment_Block_Form
      */
     protected $_instructions;
 
+    #[\Override]
     protected function _construct()
     {
         $this->setTemplate('pensopay/payment/form.phtml');

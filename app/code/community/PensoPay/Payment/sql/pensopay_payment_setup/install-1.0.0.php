@@ -11,11 +11,11 @@ $tblPayments = $installer->getConnection()
         'nullable' => false,
         'unsigned' => true,
         'primary'  => true,
-        'identity' => true
+        'identity' => true,
     ], 'Increment ID')
     ->addColumn('reference_id', Maho\Db\Ddl\Table::TYPE_INTEGER, 11, [
         'nullable' => false,
-        'unsigned' => true
+        'unsigned' => true,
     ], 'Reference ID')
     ->addColumn('is_virtualterminal', Maho\Db\Ddl\Table::TYPE_BOOLEAN, 11, ['nullable' => false, 'default' => 0], 'Is Payment VirtualTerminal')
     ->addColumn('order_id', Maho\Db\Ddl\Table::TYPE_VARCHAR, 255, ['nullable' => false, 'unsigned' => true], 'Order ID')
@@ -43,7 +43,9 @@ $tblPayments = $installer->getConnection()
     ->addColumn('hash', Maho\Db\Ddl\Table::TYPE_TEXT, 65534, ['nullable' => false], 'Payment Hash')
     ->addIndex(
         $installer->getIdxName('pensopay/payments', ['id'], Maho\Db\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE),
-        ['id'], ['type' => Maho\Db\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE])
+        ['id'],
+        ['type' => Maho\Db\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE],
+    )
     ->setComment('PensoPay Virtual Terminal Payments');
 $installer->getConnection()->createTable($tblPayments);
 

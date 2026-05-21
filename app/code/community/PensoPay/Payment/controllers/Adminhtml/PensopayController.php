@@ -2,7 +2,6 @@
 
 class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Controller_Action
 {
-
     /** @var PensoPay_Payment_Model_Payment $_payment */
     protected $_payment = null;
 
@@ -81,7 +80,8 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         return $order;
     }
 
-    private function _updatePaymentLink($sendEmail) {
+    private function _updatePaymentLink($sendEmail)
+    {
         /** @var Mage_Core_Controller_Request_Http $request */
         $request = $this->getRequest();
         $postData = $request->getPost();
@@ -90,8 +90,9 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         $paymentModel = Mage::getModel('pensopay/payment');
         if (!empty($incId)) { //Existing payment
             $paymentModel->load($incId);
-            if (!$paymentModel->getId())
+            if (!$paymentModel->getId()) {
                 return false;
+            }
         }
 
         $order = $this->_getOrderObject($postData, $paymentModel);
@@ -109,7 +110,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         $api = Mage::getModel('pensopay/api');
 
         try {
-//            $api->deletePaymentLink($order->getReferenceId()); //Currently not accepted
+            //            $api->deletePaymentLink($order->getReferenceId()); //Currently not accepted
             $payment = $api->updatePayment($order);
             $paymentLink = $api->createPaymentLink($order, $payment->id);
 
@@ -165,7 +166,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
             $newPayment->importFromRemotePayment($payment);
             $newPayment->setLink($paymentLink);
             $newPayment->setIsVirtualterminal(true);
-            $newPayment->setData('id', null);
+            $newPayment->setData('id');
             $newPayment->save();
 
             if ($sendEmail) {
@@ -282,18 +283,16 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
             } catch (Exception $e) {
                 if ($this->_redirect) {
                     return $this->_redirectToTerminal($e->getMessage());
-                } else {
-                    $this->_getSession()->addError($e->getMessage());
-                    return false;
                 }
+                $this->_getSession()->addError($e->getMessage());
+                return false;
             }
         }
 
         if ($this->_redirect) {
             return $this->_redirectToTerminal();
-        } else {
-            return true;
         }
+        return true;
     }
 
     public function cancelPaymentAction()

@@ -1,11 +1,12 @@
 <?php
 
-class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminhtml_Block_Widget_Form_Container {
-
+class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
+{
     /** @var mixed $_objId */
     protected $_objId;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->_blockGroup = 'pensopay';
         $this->_controller = 'adminhtml_virtualTerminal';
 
@@ -70,7 +71,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
                     'class' => 'delete',
                     'onclick' => 'deleteConfirm(\''
                         . Mage::helper('core')->jsQuoteEscape(
-                            $this->__('Are you sure you want to do this?')
+                            $this->__('Are you sure you want to do this?'),
                         )
                         . '\', \''
                         . $cancelUrl
@@ -84,7 +85,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
                     'class' => 'save',
                     'onclick' => 'deleteConfirm(\''
                         . Mage::helper('core')->jsQuoteEscape(
-                            $this->__('Are you sure you want to do this?')
+                            $this->__('Are you sure you want to do this?'),
                         )
                         . '\', \''
                         . $captureUrl
@@ -98,7 +99,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
                     'class' => 'cancel',
                     'onclick' => 'deleteConfirm(\''
                         . Mage::helper('core')->jsQuoteEscape(
-                            $this->__('Are you sure you want to do this?')
+                            $this->__('Are you sure you want to do this?'),
                         )
                         . '\', \''
                         . $refundUrl
@@ -135,10 +136,12 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
         }
     }
 
-    public function getHeaderText() {
-        if ($this->_objId)
+    #[\Override]
+    public function getHeaderText()
+    {
+        if ($this->_objId) {
             return $this->__('Edit Payment');
-        else
-            return $this->__('New Payment');
+        }
+        return $this->__('New Payment');
     }
 }

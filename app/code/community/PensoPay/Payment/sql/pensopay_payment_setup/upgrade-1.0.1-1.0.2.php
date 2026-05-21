@@ -1,4 +1,5 @@
 <?php
+
 /** @var $installer Mage_Api2_Model_Resource_Setup */
 $installer = $this;
 

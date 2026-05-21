@@ -2,10 +2,10 @@
 
 class PensoPay_Payment_Block_Checkout_Mobilepay extends Mage_Core_Block_Template
 {
-    const MOBILEPAY_ACTICE_XML_PATH      = 'payment/pensopay_mobilepay_checkout/active';
-    const MOBILEPAY_TITLE_XML_PATH      = 'payment/pensopay_mobilepay_checkout/title';
-    const MOBILEPAY_DESCRIPTION_XML_PATH  = 'payment/pensopay_mobilepay_checkout/instructions';
-    const MOBILEPAY_POPUP_DESCRIPTION_XML_PATH  = 'payment/pensopay_mobilepay_checkout/popup_description';
+    public const MOBILEPAY_ACTICE_XML_PATH      = 'payment/pensopay_mobilepay_checkout/active';
+    public const MOBILEPAY_TITLE_XML_PATH      = 'payment/pensopay_mobilepay_checkout/title';
+    public const MOBILEPAY_DESCRIPTION_XML_PATH  = 'payment/pensopay_mobilepay_checkout/instructions';
+    public const MOBILEPAY_POPUP_DESCRIPTION_XML_PATH  = 'payment/pensopay_mobilepay_checkout/popup_description';
 
     /**
      * @return mixed
