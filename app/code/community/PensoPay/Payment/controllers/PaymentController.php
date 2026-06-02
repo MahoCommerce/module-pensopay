@@ -2,12 +2,14 @@
 
 class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Action
 {
+    #[\Maho\Config\Route('/pensopay/payment/embedded', name: 'pensopay.payment.embedded')]
     public function embeddedAction(): void
     {
         $this->loadLayout();
         $this->renderLayout();
     }
 
+    #[\Maho\Config\Route('/pensopay/payment/email', name: 'pensopay.payment.email')]
     public function emailAction(): void
     {
         $hash = $this->getRequest()->getParam('hash');
@@ -37,6 +39,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
     /**
      * Redirect to gateway
      */
+    #[\Maho\Config\Route('/pensopay/payment/redirect', name: 'pensopay.payment.redirect')]
     public function redirectAction(): void
     {
         /** @var PensoPay_Payment_Helper_Checkout $pensopayCheckoutHelper */
@@ -112,6 +115,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
         }
     }
 
+    #[\Maho\Config\Route('/pensopay/payment/success', name: 'pensopay.payment.success')]
     public function successAction(): void
     {
         /** @var Mage_Checkout_Model_Session $checkoutSession */
@@ -179,6 +183,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
     /**
      * Handle callback
      */
+    #[\Maho\Config\Route('/pensopay/payment/callback', name: 'pensopay.payment.callback')]
     public function callbackAction(): void
     {
         $requestBody = $this->getRequest()->getRawBody();
@@ -277,12 +282,14 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
     /**
      * Show payment iframe
      */
+    #[\Maho\Config\Route('/pensopay/payment/iframe', name: 'pensopay.payment.iframe')]
     public function iframeAction(): void
     {
         $this->loadLayout();
         $this->renderLayout();
     }
 
+    #[\Maho\Config\Route('/pensopay/payment/pollPayment', name: 'pensopay.payment.pollPayment')]
     public function pollPaymentAction(): void
     {
         /** @var Mage_Checkout_Model_Session $checkoutSession */
@@ -360,6 +367,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
         ));
     }
 
+    #[\Maho\Config\Route('/pensopay/payment/iframeCancel', name: 'pensopay.payment.iframeCancel')]
     public function iframeCancelAction(): void
     {
         /** @var PensoPay_Payment_Helper_Checkout $pensopayCheckoutHelper */
@@ -383,6 +391,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
     /**
      * Handle customer cancelling payment
      */
+    #[\Maho\Config\Route('/pensopay/payment/cancel', name: 'pensopay.payment.cancel')]
     public function cancelAction(): void
     {
         /** @var PensoPay_Payment_Helper_Checkout $pensopayCheckoutHelper */

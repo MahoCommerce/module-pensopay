@@ -6,6 +6,8 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
 
     protected bool $_redirect = true;
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay', name: 'pensopay.adminhtml_pensopay')]
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/index', name: 'pensopay.adminhtml_pensopay.index')]
     public function indexAction(): void
     {
         $this->_redirectToTerminal();
@@ -15,6 +17,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
     /**
      * Show virtual terminal
      */
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/terminal', name: 'pensopay.adminhtml_pensopay.terminal')]
     public function terminalAction(): void
     {
         $this->loadLayout();
@@ -29,6 +32,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         $this->_redirect('adminhtml/pensopay/terminal');
     }
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/edit', name: 'pensopay.adminhtml_pensopay.edit')]
     public function editAction(): void
     {
         $id = $this->getRequest()->getParam('id');
@@ -164,6 +168,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         return true;
     }
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/saveAndPay', name: 'pensopay.adminhtml_pensopay.saveAndPay')]
     public function saveAndPayAction(): void
     {
         if ($this->getRequest()->isPost()) {
@@ -174,6 +179,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         $this->_redirectToTerminal();
     }
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/saveAndSend', name: 'pensopay.adminhtml_pensopay.saveAndSend')]
     public function saveAndSendAction(): void
     {
         if ($this->getRequest()->isPost()) {
@@ -182,6 +188,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         $this->_redirectToTerminal();
     }
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/updateAndPay', name: 'pensopay.adminhtml_pensopay.updateAndPay')]
     public function updateAndPayAction(): void
     {
         if ($this->getRequest()->isPost()) {
@@ -192,6 +199,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         $this->_redirectToTerminal();
     }
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/updateAndSend', name: 'pensopay.adminhtml_pensopay.updateAndSend')]
     public function updateAndSendAction(): void
     {
         if ($this->getRequest()->isPost()) {
@@ -200,6 +208,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         $this->_redirectToTerminal();
     }
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/updatePaymentStatus', name: 'pensopay.adminhtml_pensopay.updatePaymentStatus')]
     public function updatePaymentStatusAction(): void
     {
         /** @var Mage_Core_Controller_Request_Http $request */
@@ -281,16 +290,19 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         return true;
     }
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/cancelPayment', name: 'pensopay.adminhtml_pensopay.cancelPayment')]
     public function cancelPaymentAction(): void
     {
         $this->_genericPaymentCallback('cancel');
     }
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/capturePayment', name: 'pensopay.adminhtml_pensopay.capturePayment')]
     public function capturePaymentAction(): void
     {
         $this->_genericPaymentCallback('capture');
     }
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/refundPayment', name: 'pensopay.adminhtml_pensopay.refundPayment')]
     public function refundPaymentAction(): void
     {
         $this->_genericPaymentCallback('refund');
@@ -324,16 +336,19 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
         $this->_redirectToTerminal();
     }
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/massCapture', name: 'pensopay.adminhtml_pensopay.massCapture')]
     public function massCaptureAction(): void
     {
         $this->_genericMassPaymentAction('capture');
     }
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/massCancel', name: 'pensopay.adminhtml_pensopay.massCancel')]
     public function massCancelAction(): void
     {
         $this->_genericMassPaymentAction('cancel');
     }
 
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/massRefund', name: 'pensopay.adminhtml_pensopay.massRefund')]
     public function massRefundAction(): void
     {
         $this->_genericMassPaymentAction('refund');
@@ -344,6 +359,7 @@ class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Contr
      *
      * @throws Mage_Core_Exception
      */
+    #[\Maho\Config\Route('/pensopay/adminhtml_pensopay/orderMassCapture', name: 'pensopay.adminhtml_pensopay.orderMassCapture')]
     public function orderMassCaptureAction(): void
     {
         $orderIds = $this->getRequest()->getPost('order_ids', []);

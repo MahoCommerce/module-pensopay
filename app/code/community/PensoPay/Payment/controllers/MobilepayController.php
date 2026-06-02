@@ -2,6 +2,7 @@
 
 class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Action
 {
+    #[\Maho\Config\Route('/pensopay/mobilepay/redirect', name: 'pensopay.mobilepay.redirect')]
     public function redirectAction(): void
     {
         $params = $this->getRequest()->getParams();

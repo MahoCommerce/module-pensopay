@@ -5,6 +5,7 @@ class PensoPay_Payment_Model_Observer
     /**
      * Check for feed updates
      */
+    #[\Maho\Config\Observer('controller_action_predispatch', area: 'adminhtml', id: 'pensopay_feed_notifications')]
     public function controllerActionPredispatch(\Maho\Event\Observer $observer): void
     {
         if (Mage::getSingleton('admin/session')->isLoggedIn()) {
@@ -18,6 +19,7 @@ class PensoPay_Payment_Model_Observer
     /**
      * Add fraud probability to order grid
      */
+    #[\Maho\Config\Observer('adminhtml_block_html_before', area: 'adminhtml', id: 'pensopay_payment_mass')]
     public function onBlockHtmlBefore(\Maho\Event\Observer $observer): void
     {
         $block = $observer->getEvent()->getBlock();
@@ -38,6 +40,7 @@ class PensoPay_Payment_Model_Observer
     /**
      * Disable stock subtraction if configured to do so
      */
+    #[\Maho\Config\Observer('checkout_type_onepage_save_order', area: 'frontend', id: 'pensopay_payment')]
     public function checkoutTypeOnepageSaveOrder(\Maho\Event\Observer $observer): void
     {
         /** @var Mage_Sales_Model_Quote $quote */
@@ -47,6 +50,7 @@ class PensoPay_Payment_Model_Observer
         }
     }
 
+    #[\Maho\Config\Observer('sales_order_place_after', area: 'frontend', type: 'singleton', id: 'pensopay_payment')]
     public function saveOrder(\Maho\Event\Observer $observer): self
     {
         $session = Mage::getSingleton('adminhtml/session');
@@ -67,6 +71,7 @@ class PensoPay_Payment_Model_Observer
         return $this;
     }
 
+    #[\Maho\Config\Observer('core_block_abstract_to_html_after', area: 'frontend', id: 'pensopay_payment')]
     public function addViabillPricetag(\Maho\Event\Observer $observer): void
     {
         $block = $observer->getBlock();
@@ -109,6 +114,7 @@ class PensoPay_Payment_Model_Observer
         }
     }
 
+    #[\Maho\Config\CronJob('update_virtualterminal_payment_status', schedule: '*/10 * * * *')]
     public function updateVirtualterminalPaymentStatus(): self
     {
         /** @var PensoPay_Payment_Model_Resource_Payment_Collection $collection */
@@ -128,6 +134,7 @@ class PensoPay_Payment_Model_Observer
         return $this;
     }
 
+    #[\Maho\Config\Observer('order_cancel_after', type: 'singleton', id: 'pensopay_payment_cancel')]
     public function cancelOrderAfter(\Maho\Event\Observer $observer): void
     {
         /** @var Mage_Sales_Model_Order $order */
@@ -156,6 +163,7 @@ class PensoPay_Payment_Model_Observer
     /**
      * Cancel all orders that are pending payment for >= 24h
      */
+    #[\Maho\Config\CronJob('pensopay_pending_payment_order_cancel', schedule: '0 * * * *')]
     public function pendingPaymentOrderCancel(): self
     {
         //Disabled from admin
@@ -197,6 +205,7 @@ class PensoPay_Payment_Model_Observer
         return $this;
     }
 
+    #[\Maho\Config\Observer('checkout_submit_all_after', area: 'adminhtml', id: 'pensopay_payment')]
     public function checkoutSubmitAllAfter(\Maho\Event\Observer $observer): void
     {
         /** @var Mage_Sales_Model_Order $order */

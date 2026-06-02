@@ -1,6 +1,7 @@
 # PensoPay Payment Module for Maho Commerce
 
 ![Maho Commerce](https://img.shields.io/badge/Maho_Commerce-module-orange)
+![Maho Version](https://img.shields.io/badge/Maho-%3E%3D26.5-orange)
 ![License](https://img.shields.io/badge/license-OSL--3.0-blue)
 ![PHP](https://img.shields.io/badge/php-%3E%3D8.3-8892BF)
 ![PHPStan Level](https://img.shields.io/badge/PHPStan-level%208-brightgreen)
@@ -9,7 +10,7 @@ A QuickPay payment gateway integration for Maho Commerce, supporting multiple No
 
 ## Requirements
 
-- Maho Commerce 26.1+
+- Maho Commerce 26.5+
 - PHP 8.3+
 - PensoPay/QuickPay merchant account
 
