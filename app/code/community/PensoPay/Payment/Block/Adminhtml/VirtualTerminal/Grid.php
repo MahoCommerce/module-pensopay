@@ -13,7 +13,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Grid extends Mage_Adminht
     }
 
     #[\Override]
-    protected function _prepareCollection()
+    protected function _prepareCollection(): self
     {
         /** @var PensoPay_Payment_Model_Resource_Payment_Collection $collection */
         $collection = Mage::getResourceModel('pensopay/payment_collection');
@@ -23,7 +23,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Grid extends Mage_Adminht
     }
 
     #[\Override]
-    protected function _prepareMassaction()
+    protected function _prepareMassaction(): self
     {
         $this->setMassactionIdField('id');
 
@@ -51,7 +51,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Grid extends Mage_Adminht
     }
 
     #[\Override]
-    protected function _prepareColumns()
+    protected function _prepareColumns(): self
     {
         $this->addColumn('id', [
             'header' => $this->__('ID'),
@@ -125,7 +125,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Grid extends Mage_Adminht
     }
 
     #[\Override]
-    public function getRowUrl($item)
+    public function getRowUrl($item): string
     {
         return $this->getUrl('*/*/edit', ['id' => $item->getId()]);
     }

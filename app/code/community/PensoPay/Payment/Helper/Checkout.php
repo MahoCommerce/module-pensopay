@@ -46,9 +46,6 @@ class PensoPay_Payment_Helper_Checkout extends Mage_Core_Helper_Abstract
         return $checkoutMethod === PensoPay_Payment_Model_System_Config_Source_CheckoutMethods::METHOD_EMBEDDED;
     }
 
-    /**
-     * Return checkout session
-     */
     public function getCheckoutSession(): Mage_Checkout_Model_Session
     {
         return Mage::getSingleton('checkout/session');

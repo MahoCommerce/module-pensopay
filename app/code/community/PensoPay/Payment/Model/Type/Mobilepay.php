@@ -349,10 +349,8 @@ class PensoPay_Payment_Model_Type_Mobilepay
 
     /**
      * Sets cart coupon code from checkout to quote
-     *
-     * @return $this
      */
-    protected function _setCartCouponCode()
+    protected function _setCartCouponCode(): self
     {
         if ($couponCode = $this->getCheckout()->getCartCouponCode()) {
             $this->getQuote()->setCouponCode($couponCode);
@@ -362,20 +360,16 @@ class PensoPay_Payment_Model_Type_Mobilepay
 
     /**
      * Get frontend checkout session object
-     *
-     * @return Mage_Checkout_Model_Session
      */
-    public function getCheckout()
+    public function getCheckout(): Mage_Checkout_Model_Session
     {
         return Mage::getSingleton('checkout/session');
     }
 
     /**
      * Get quote
-     *
-     * @return Mage_Sales_Model_Quote
      */
-    public function getQuote()
+    public function getQuote(): Mage_Sales_Model_Quote
     {
         return $this->getCheckout()->getQuote();
     }

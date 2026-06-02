@@ -17,7 +17,7 @@ class PensoPay_Payment_Model_Method_Anyday extends PensoPay_Payment_Model_Method
     }
 
     #[\Override]
-    public function canUseForCurrency($currencyCode)
+    public function canUseForCurrency($currencyCode): bool
     {
         return $currencyCode === 'DKK'; //Anyday-split currently only has DKK available
     }

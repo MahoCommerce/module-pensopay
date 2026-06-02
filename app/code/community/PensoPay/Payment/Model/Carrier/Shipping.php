@@ -8,7 +8,7 @@ class PensoPay_Payment_Model_Carrier_Shipping extends Mage_Shipping_Model_Carrie
     protected $_code = 'pensopay_mobilepay';
 
     #[\Override]
-    public function collectRates(Mage_Shipping_Model_Rate_Request $request)
+    public function collectRates(Mage_Shipping_Model_Rate_Request $request): Mage_Shipping_Model_Rate_Result|false
     {
         if (!Mage::getStoreConfig('payment/pensopay_mobilepay_checkout/active', $this->getStore()) || !Mage::app()->getRequest()->getParam('mobilepay')) {
             return false;
@@ -23,7 +23,7 @@ class PensoPay_Payment_Model_Carrier_Shipping extends Mage_Shipping_Model_Carrie
      * @return array<string, mixed>
      */
     #[\Override]
-    public function getAllowedMethods()
+    public function getAllowedMethods(): array
     {
         return [
             $this->_code => $this->getConfigData('name'),
@@ -45,7 +45,7 @@ class PensoPay_Payment_Model_Carrier_Shipping extends Mage_Shipping_Model_Carrie
     }
 
     #[\Override]
-    public function isTrackingAvailable()
+    public function isTrackingAvailable(): bool
     {
         return false;
     }

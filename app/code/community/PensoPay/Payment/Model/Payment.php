@@ -2,8 +2,7 @@
 
 class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract
 {
-    /** @var PensoPay_Payment_Helper_Data $_helper */
-    protected $_helper;
+    protected PensoPay_Payment_Helper_Data $_helper;
 
     public const STATE_INITIAL = 'initial';
     public const STATE_NEW     = 'new';
@@ -87,6 +86,9 @@ class PensoPay_Payment_Model_Payment extends Mage_Core_Model_Abstract
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getMetadata(): array
     {
         if (!empty($this->getData('metadata'))) {

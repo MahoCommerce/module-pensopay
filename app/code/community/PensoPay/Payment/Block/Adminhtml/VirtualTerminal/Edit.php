@@ -2,8 +2,7 @@
 
 class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
 {
-    /** @var mixed $_objId */
-    protected $_objId;
+    protected mixed $_objId = null;
 
     public function __construct()
     {
@@ -131,7 +130,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminht
     }
 
     #[\Override]
-    public function getHeaderText()
+    public function getHeaderText(): string
     {
         if ($this->_objId) {
             return $this->__('Edit Payment');

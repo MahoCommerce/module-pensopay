@@ -9,9 +9,9 @@ class PensoPay_Payment_Model_System_Config_Source_CheckoutMethods
     /**
      * Get available payment methods
      *
-     * @return array
+     * @return array<array{value: string, label: string}>
      */
-    public function toOptionArray()
+    public function toOptionArray(): array
     {
         return [
             [

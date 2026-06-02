@@ -3,7 +3,7 @@
 class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Renderer_Grid_Status extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
 {
     #[\Override]
-    public function render(\Maho\DataObject $row)
+    public function render(\Maho\DataObject $row): string
     {
         /** @var PensoPay_Payment_Helper_Data $helper */
         $helper = Mage::helper('pensopay');

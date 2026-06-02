@@ -25,29 +25,44 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
      */
     protected $_infoBlockType = 'pensopay/info';
 
+    /** @var bool */
     protected $_isGateway                   = true;
+    /** @var bool */
     protected $_canOrder                    = true;
+    /** @var bool */
     protected $_canAuthorize                = true;
+    /** @var bool */
     protected $_canCapture                  = true;
+    /** @var bool */
     protected $_canCapturePartial           = true;
+    /** @var bool */
     protected $_canCaptureOnce              = true;
+    /** @var bool */
     protected $_canRefund                   = true;
+    /** @var bool */
     protected $_canRefundInvoicePartial     = true;
+    /** @var bool */
     protected $_canVoid                     = true;
+    /** @var bool */
     protected $_canUseInternal              = true;
+    /** @var bool */
     protected $_canUseCheckout              = true;
+    /** @var bool */
     protected $_canUseForMultishipping      = true;
+    /** @var bool */
     protected $_isInitializeNeeded          = true;
+    /** @var bool */
     protected $_canFetchTransactionInfo     = true;
+    /** @var bool */
     protected $_canReviewPayment            = true;
+    /** @var bool */
     protected $_canCreateBillingAgreement   = true;
+    /** @var bool */
     protected $_canManageRecurringProfiles  = true;
 
-    /** @var PensoPay_Payment_Model_Api $_api */
-    protected $_api;
+    protected PensoPay_Payment_Model_Api $_api;
 
-    /** @var PensoPay_Payment_Helper_Data $_helper */
-    protected $_helper;
+    protected PensoPay_Payment_Helper_Data $_helper;
 
     public function __construct()
     {
@@ -63,7 +78,7 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
      * @param \Maho\DataObject $stateObject
      */
     #[\Override]
-    public function initialize($paymentAction, $stateObject)
+    public function initialize($paymentAction, $stateObject): static
     {
         $stateObject->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT);
         $stateObject->setStatus('pending');
@@ -82,7 +97,7 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
      * @throws Exception
      */
     #[\Override]
-    public function capture(\Maho\DataObject $payment, $amount)
+    public function capture(\Maho\DataObject $payment, $amount): static
     {
         if ($payment->getInfoInstance()) {
             $order = $payment->getInfoInstance()->getOrder();
@@ -135,7 +150,7 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
      * @throws Exception
      */
     #[\Override]
-    public function refund(\Maho\DataObject $payment, $amount)
+    public function refund(\Maho\DataObject $payment, $amount): static
     {
         /** @var Mage_Sales_Model_Order $order */
         $order = $payment->getOrder();

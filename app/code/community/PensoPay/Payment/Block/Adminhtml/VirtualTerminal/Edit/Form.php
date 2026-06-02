@@ -2,8 +2,7 @@
 
 class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
 {
-    /** @var PensoPay_Payment_Helper_Data $_helper */
-    protected $_helper;
+    protected PensoPay_Payment_Helper_Data $_helper;
 
     public function __construct(array $args)
     {
@@ -14,7 +13,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
     }
 
     #[\Override]
-    protected function _prepareForm()
+    protected function _prepareForm(): self
     {
         $form = new \Maho\Data\Form();
 

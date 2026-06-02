@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 PensoPay_Payment is a **MahoCommerce module** (migrated from Magento 1.x) that integrates with the **QuickPay payment gateway** (api.quickpay.net). It provides multiple Nordic payment methods: credit cards, MobilePay, Klarna, ViaBill, Dankort, Vipps, PayPal, and Anyday.
 
-**Module version:** 1.2.2
+**Module version:** 3.0.0
 **Code pool:** `app/code/community/PensoPay/Payment`
 **Platform:** MahoCommerce (PHP 8.3+)
 **Installation:** Composer

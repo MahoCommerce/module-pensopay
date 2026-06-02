@@ -2,11 +2,9 @@
 
 class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Controller_Action
 {
-    /** @var PensoPay_Payment_Model_Payment|null $_payment */
-    protected $_payment = null;
+    protected ?PensoPay_Payment_Model_Payment $_payment = null;
 
-    /** @var bool $_redirect */
-    protected $_redirect = true;
+    protected bool $_redirect = true;
 
     public function indexAction(): void
     {

@@ -17,13 +17,13 @@ class PensoPay_Payment_Block_Adminhtml_Virtualterminal extends Mage_Adminhtml_Bl
     }
 
     #[\Override]
-    public function getCreateUrl()
+    public function getCreateUrl(): string
     {
         return $this->getUrl('*/*/edit');
     }
 
     #[\Override]
-    protected function _toHtml()
+    protected function _toHtml(): string
     {
         $html = '';
         $session = Mage::getSingleton('adminhtml/session');
@@ -38,7 +38,7 @@ class PensoPay_Payment_Block_Adminhtml_Virtualterminal extends Mage_Adminhtml_Bl
     }
 
     #[\Override]
-    protected function _construct()
+    protected function _construct(): void
     {
         $this->_blockGroup = 'pensopay';
         $this->_controller = 'adminhtml_virtualTerminal';

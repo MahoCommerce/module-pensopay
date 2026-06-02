@@ -3,7 +3,7 @@
 class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Renderer_Grid_Link extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
 {
     #[\Override]
-    public function render(\Maho\DataObject $row)
+    public function render(\Maho\DataObject $row): string
     {
         $value = $row->getData($this->getColumn()->getIndex());
         if ($value === 'Array' || empty($value) || is_array($value)) { //in case of a corrupted link in the database, show an error

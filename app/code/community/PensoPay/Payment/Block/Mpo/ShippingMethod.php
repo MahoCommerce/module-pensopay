@@ -4,20 +4,16 @@ class PensoPay_Payment_Block_Mpo_ShippingMethod extends Mage_Checkout_Block_Onep
 {
     /**
      * Get save shipping url
-     *
-     * @return string
      */
-    public function getPostActionUrl()
+    public function getPostActionUrl(): string
     {
         return $this->getUrl('*/*/shippingPost');
     }
 
     /**
      * Get Cart URL
-     *
-     * @return mixed
      */
-    public function getBackUrl()
+    public function getBackUrl(): string
     {
         return Mage::helper('checkout/cart')->getCartUrl();
     }

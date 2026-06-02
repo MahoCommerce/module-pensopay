@@ -2,10 +2,7 @@
 
 class PensoPay_Payment_Model_Api
 {
-    /**
-     * @var string
-     */
-    protected $baseurl = 'https://api.quickpay.net';
+    protected string $baseurl = 'https://api.quickpay.net';
 
     /**
      * @throws Mage_Core_Exception
@@ -121,10 +118,9 @@ class PensoPay_Payment_Model_Api
     /**
      * Create payment for order
      *
-     * @return mixed
      * @throws Mage_Core_Exception
      */
-    public function createPayment(Mage_Sales_Model_Order $order)
+    public function createPayment(Mage_Sales_Model_Order $order): mixed
     {
         $request = new \Maho\DataObject();
 
@@ -143,10 +139,9 @@ class PensoPay_Payment_Model_Api
     /**
      * Update payment
      *
-     * @return mixed
      * @throws Mage_Core_Exception
      */
-    public function updatePayment(Mage_Sales_Model_Order $order)
+    public function updatePayment(Mage_Sales_Model_Order $order): mixed
     {
         $request = new \Maho\DataObject();
 
@@ -359,10 +354,8 @@ class PensoPay_Payment_Model_Api
 
     /**
      * Get API key
-     *
-     * @return mixed
      */
-    private function getApiKey()
+    private function getApiKey(): mixed
     {
         /** @var PensoPay_Payment_Helper_Data $helper */
         $helper = Mage::helper('pensopay');

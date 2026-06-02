@@ -3,7 +3,7 @@
 class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Renderer_Operations extends \Maho\Data\Form\Element\AbstractElement
 {
     #[\Override]
-    public function getElementHtml()
+    public function getElementHtml(): string
     {
         /** @var PensoPay_Payment_Helper_Data $helper */
         $helper = Mage::helper('pensopay');
