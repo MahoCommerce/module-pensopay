@@ -15,7 +15,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Renderer_Operations 
             $html = '<table class="operations">';
             $html .= sprintf('<tr><th>%s</th><th>%s</th><th>%s</th></tr>', $helper->__('Type'), $helper->__('Result'), $helper->__('Time'));
             foreach ($operationsArray as $operation) {
-                $html .= sprintf('<tr class="%s"><td>%s</td><td>%s: %s</td><td>%s</td></tr>', $helper->getStatusColorCode($operation['qp_status_code']), $operation['type'], $operation['qp_status_code'], $operation['qp_status_msg'], date('d-m-Y H:i:s', strtotime($operation['created_at'])));
+                $html .= sprintf('<tr class="%s"><td>%s</td><td>%s: %s</td><td>%s</td></tr>', $helper->getStatusColorCode($operation['qp_status_code']), $operation['type'], $operation['qp_status_code'], $operation['qp_status_msg'], date('d-m-Y H:i:s', strtotime((string) $operation['created_at'])));
             }
             $html .= '</table>';
             return $html;

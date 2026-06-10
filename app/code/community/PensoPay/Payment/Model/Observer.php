@@ -153,7 +153,7 @@ class PensoPay_Payment_Model_Observer
                 if ($paymentModel->canCancel()) {
                     try {
                         $paymentModel->cancel();
-                    } catch (Exception $e) {
+                    } catch (Exception) {
                     }
                 }
             }
