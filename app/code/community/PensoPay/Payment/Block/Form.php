@@ -25,7 +25,7 @@ class PensoPay_Payment_Block_Form extends Mage_Payment_Block_Form
     public function getMethodLabelAfterHtml(): string
     {
         $cardsConfig = Mage::getStoreConfig('payment/pensopay/cardlogos');
-        $cards = explode(',', $cardsConfig);
+        $cards = explode(',', (string) $cardsConfig);
 
         $html = '';
         if (count($cards) > 0) {

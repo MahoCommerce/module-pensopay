@@ -195,7 +195,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
             return;
         }
 
-        $checksum = hash_hmac('sha256', $requestBody, $this->getPrivateKey());
+        $checksum = hash_hmac('sha256', $requestBody, (string) $this->getPrivateKey());
 
         /** @var PensoPay_Payment_Helper_Checkout $pensopayCheckoutHelper */
         $pensopayCheckoutHelper = Mage::helper('pensopay/checkout');
@@ -217,7 +217,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                             $order->cancel();
                             $order->addStatusHistoryComment('Order placed with test card.');
                             $order->save();
-                        } catch (Exception $e) {
+                        } catch (Exception) {
                             Mage::log('Failed to cancel testmode order #' . $order->getIncrementId(), null, 'qp_debug.log');
                         }
                     }
@@ -265,7 +265,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                     if ((int) $pensopayCheckoutHelper->getPaymentConfig('sendmailorderconfirmation') == 1 && !$order->getEmailSent()) {
                         $order->sendNewOrderEmail();
                     }
-                } catch (Exception $e) {
+                } catch (Exception) {
 
                 }
             }
@@ -353,7 +353,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                         'redirect' => '',
                     ],
                 ));
-            } catch (Exception $e) {
+            } catch (Exception) {
             }
             return;
         }

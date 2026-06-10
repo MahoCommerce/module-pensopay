@@ -110,7 +110,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
     public function saveBilling(Mage_Sales_Model_Quote $quote, stdClass $request): ?array
     {
         $invoiceAddress = $request->invoice_address;
-        $nameParts = explode(' ', $invoiceAddress->name);
+        $nameParts = explode(' ', (string) $invoiceAddress->name);
 
         $data = [
             'firstname' => array_shift($nameParts),
@@ -221,7 +221,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
     {
         $shippingAddress = $request->shipping_address;
         $invoiceAddress = $request->invoice_address;
-        $nameParts = explode(' ', $shippingAddress->name);
+        $nameParts = explode(' ', (string) $shippingAddress->name);
 
         $data = [
             'firstname' => array_shift($nameParts),

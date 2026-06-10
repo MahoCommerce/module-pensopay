@@ -337,7 +337,7 @@ class PensoPay_Payment_Model_Api
                 'Accept-Version' => 'v10',
                 'Accept'         => 'application/json',
                 'Content-Type'   => 'application/json',
-                'Content-Length' => strlen($body),
+                'Content-Length' => strlen((string) $body),
             ],
             'body' => $body,
         ]);
