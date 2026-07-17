@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Shipping carrier providing the configurable delivery methods for MobilePay Checkout.
+ *
+ * SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
+ * SPDX-FileCopyrightText: 2019-2022 PensoPay <https://pensopay.com>
+ * SPDX-License-Identifier: OSL-3.0
+ * @package PensoPay_Payment
+ */
+
 class PensoPay_Payment_Model_Carrier_Shipping extends Mage_Shipping_Model_Carrier_Abstract implements Mage_Shipping_Model_Carrier_Interface
 {
     /**

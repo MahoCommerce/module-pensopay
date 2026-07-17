@@ -1,4 +1,9 @@
 <?xml version="1.0"?>
+<!--
+SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
+SPDX-FileCopyrightText: 2019-2022 PensoPay <https://pensopay.com>
+SPDX-License-Identifier: AFL-3.0
+-->
 <layout>
     <default>
         <reference name="head">

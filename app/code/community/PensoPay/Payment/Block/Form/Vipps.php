@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
+ * SPDX-FileCopyrightText: 2019-2022 PensoPay <https://pensopay.com>
+ * SPDX-License-Identifier: OSL-3.0
+ * @package PensoPay_Payment
+ */
+
 class PensoPay_Payment_Block_Form_Vipps extends Mage_Payment_Block_Form
 {
     /**

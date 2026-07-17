@@ -84,3 +84,24 @@ After editing any attribute, run `composer dump-autoload` to recompile `vendor/c
 - Use short array syntax `[]` everywhere (no `array()`)
 - Use `Mage::LOG_WARNING` (not bare `LOG_WARNING` constant)
 - Use `json_encode()`/`json_decode()` for serialization (not `serialize()`)
+
+### File Headers (SPDX)
+
+Every source file carries an SPDX header — no legacy `@copyright`/`@license` docblocks. For new files use:
+
+```php
+<?php
+
+/**
+ * Optional one-line class description ending with a period.
+ *
+ * SPDX-FileCopyrightText: <current year> Maho <https://mahocommerce.com>
+ * SPDX-License-Identifier: OSL-3.0
+ * @package PensoPay_Payment
+ */
+```
+
+- PHP/JS/CSS source: `OSL-3.0`. PHTML templates, XML, HTML: `AFL-3.0`.
+- XML uses a `<!-- -->` comment after the prolog, CSS a `/* */` block (never `//`), JS `//` line comments.
+- Existing files carry `SPDX-FileCopyrightText: 2019-2022 PensoPay <https://pensopay.com>` for the original module work — preserve those lines verbatim.
+- `magnific-popup.css` is vendored third-party code (Dmitry Semenov, MIT) — leave its attribution alone.

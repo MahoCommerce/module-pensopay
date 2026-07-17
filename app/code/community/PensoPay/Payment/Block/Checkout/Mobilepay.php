@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Provides MobilePay Checkout configuration and shipping methods to the checkout template.
+ *
+ * SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
+ * SPDX-FileCopyrightText: 2019-2022 PensoPay <https://pensopay.com>
+ * SPDX-License-Identifier: OSL-3.0
+ * @package PensoPay_Payment
+ */
+
 class PensoPay_Payment_Block_Checkout_Mobilepay extends Mage_Core_Block_Template
 {
     public const MOBILEPAY_ACTICE_XML_PATH      = 'payment/pensopay_mobilepay_checkout/active';

@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Utility helper for ViaBill configuration, state/status colors, payment link emails and country code conversion.
+ *
+ * SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
+ * SPDX-FileCopyrightText: 2019-2022 PensoPay <https://pensopay.com>
+ * SPDX-License-Identifier: OSL-3.0
+ * @package PensoPay_Payment
+ */
+
 class PensoPay_Payment_Helper_Data extends Mage_Core_Helper_Abstract
 {
     public const LOG_FILENAME = 'pensopay.log';

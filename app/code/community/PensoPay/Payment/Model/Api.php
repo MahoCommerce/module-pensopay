@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * QuickPay REST API client handling payment create, capture, refund and cancel operations.
+ *
+ * SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
+ * SPDX-FileCopyrightText: 2019-2022 PensoPay <https://pensopay.com>
+ * SPDX-License-Identifier: OSL-3.0
+ * @package PensoPay_Payment
+ */
+
 class PensoPay_Payment_Model_Api
 {
     protected string $baseurl = 'https://api.quickpay.net';
