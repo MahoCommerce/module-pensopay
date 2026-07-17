@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Admin controller for the Virtual Terminal.
+ *
+ * SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
+ * SPDX-FileCopyrightText: 2019-2022 PensoPay <https://pensopay.com>
+ * SPDX-License-Identifier: OSL-3.0
+ * @package PensoPay_Payment
+ */
+
 class PensoPay_Payment_Adminhtml_PensopayController extends Mage_Adminhtml_Controller_Action
 {
     protected ?PensoPay_Payment_Model_Payment $_payment = null;

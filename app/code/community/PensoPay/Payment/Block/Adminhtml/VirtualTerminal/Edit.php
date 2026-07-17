@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Form container for Virtual Terminal payments with send/pay/capture/refund/cancel buttons.
+ *
+ * SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
+ * SPDX-FileCopyrightText: 2019-2022 PensoPay <https://pensopay.com>
+ * SPDX-License-Identifier: OSL-3.0
+ * @package PensoPay_Payment
+ */
+
 class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
 {
     protected mixed $_objId = null;

@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Renders the payment status as a color-coded badge in the payment edit form.
+ *
+ * SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
+ * SPDX-FileCopyrightText: 2019-2022 PensoPay <https://pensopay.com>
+ * SPDX-License-Identifier: OSL-3.0
+ * @package PensoPay_Payment
+ */
+
 class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Renderer_Status extends \Maho\Data\Form\Element\AbstractElement
 {
     #[\Override]

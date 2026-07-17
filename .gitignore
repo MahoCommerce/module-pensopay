@@ -1,0 +1,15 @@
+/.idea/
+/.php-cs-fixer.cache
+/composer.lock
+/vendor/
+
+# Materialized by the Maho composer plugin on composer install
+/maho
+/public/.htaccess
+/public/api.php
+/public/index.php
+/public/js/
+/public/media/
+/public/skin/**
+!/public/skin/**/
+!/public/skin/**/pensopay/**

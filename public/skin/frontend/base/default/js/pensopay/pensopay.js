@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
+// SPDX-FileCopyrightText: 2019-2022 PensoPay <https://pensopay.com>
+// SPDX-License-Identifier: OSL-3.0
+
 window.PensoPay = window.PensoPay || {}, window.PensoPay.Embedded = window.PensoPay.Embedded || {}, function (e) {
     var t = e.PensoPay.Embedded;
     t.CardDetails = function (e) {
