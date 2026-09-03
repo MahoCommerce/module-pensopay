@@ -93,9 +93,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
      */
     public function saveShippingMethod(Mage_Sales_Model_Quote $quote, ?string $shippingMethod = null): void
     {
-        if ($shippingMethod === null) {
-            $shippingMethod = Mage::getStoreConfig('payment/pensopay_mobilepay/default_shipping_method');
-        }
+        $shippingMethod ??= Mage::getStoreConfig('payment/pensopay_mobilepay/default_shipping_method');
 
         $rate = $this->getQuote()->getShippingAddress()->getShippingRateByCode($shippingMethod);
 
