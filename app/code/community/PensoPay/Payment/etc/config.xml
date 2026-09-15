@@ -7,7 +7,7 @@ SPDX-License-Identifier: AFL-3.0
 <config>
     <modules>
         <PensoPay_Payment>
-            <version>4.0.0</version>
+            <version>4.0.1</version>
         </PensoPay_Payment>
     </modules>
     <global>
