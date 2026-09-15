@@ -14,6 +14,7 @@ class PensoPay_Payment_Model_Carrier_Shipping extends Mage_Shipping_Model_Carrie
     /**
      * @var string
      */
+    #[\Override]
     protected $_code = 'pensopay_mobilepay';
 
     #[\Override]
