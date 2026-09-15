@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 class PensoPay_Payment_Model_Method_Anyday extends PensoPay_Payment_Model_Method
 {
+    #[\Override]
     protected $_code = 'pensopay_anyday';
+    #[\Override]
     protected $_formBlockType = 'pensopay/form_anyday';
 
     /**

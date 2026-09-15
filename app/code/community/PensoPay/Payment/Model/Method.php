@@ -16,6 +16,7 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
      *
      * @var string
      */
+    #[\Override]
     protected $_code = 'pensopay';
 
     /**
@@ -24,6 +25,7 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
      * @see PensoPay_Payment_Block_Form for the corresponding class
      * @var string
      */
+    #[\Override]
     protected $_formBlockType = 'pensopay/form';
 
     /**
@@ -32,41 +34,58 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
      * @see PensoPay_Payment_Block_Info for the corresponding class
      * @var string
      */
+    #[\Override]
     protected $_infoBlockType = 'pensopay/info';
 
     /** @var bool */
+    #[\Override]
     protected $_isGateway                   = true;
     /** @var bool */
+    #[\Override]
     protected $_canOrder                    = true;
     /** @var bool */
+    #[\Override]
     protected $_canAuthorize                = true;
     /** @var bool */
+    #[\Override]
     protected $_canCapture                  = true;
     /** @var bool */
+    #[\Override]
     protected $_canCapturePartial           = true;
     /** @var bool */
+    #[\Override]
     protected $_canCaptureOnce              = true;
     /** @var bool */
+    #[\Override]
     protected $_canRefund                   = true;
     /** @var bool */
+    #[\Override]
     protected $_canRefundInvoicePartial     = true;
     /** @var bool */
+    #[\Override]
     protected $_canVoid                     = true;
     /** @var bool */
+    #[\Override]
     protected $_canUseInternal              = true;
     /** @var bool */
+    #[\Override]
     protected $_canUseCheckout              = true;
     /** @var bool */
     protected $_canUseForMultishipping      = true;
     /** @var bool */
+    #[\Override]
     protected $_isInitializeNeeded          = true;
     /** @var bool */
+    #[\Override]
     protected $_canFetchTransactionInfo     = true;
     /** @var bool */
+    #[\Override]
     protected $_canReviewPayment            = true;
     /** @var bool */
+    #[\Override]
     protected $_canCreateBillingAgreement   = true;
     /** @var bool */
+    #[\Override]
     protected $_canManageRecurringProfiles  = true;
 
     protected PensoPay_Payment_Model_Api $_api;
