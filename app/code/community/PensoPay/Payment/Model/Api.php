@@ -211,7 +211,7 @@ class PensoPay_Payment_Model_Api
         $request->setAgreementId(Mage::getStoreConfig(PensoPay_Payment_Model_Config::XML_PATH_AGREEMENT_ID, $order->getStore()));
 
         if ($order->getIsVirtualTerminal()) {
-            $store = array_first(Mage::app()->getStores()); //First non-admin store
+            $store = array_first(Mage::app()->getStores()) ?? $order->getStore(); //First non-admin store
         } else {
             $store = $order->getStore();
         }
