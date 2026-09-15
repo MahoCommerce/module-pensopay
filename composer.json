@@ -17,7 +17,10 @@
             "mahocommerce/maho-composer-plugin": true
         },
         "platform": {
-            "php": "8.3"
+            "php": "8.5"
         }
+    },
+    "require": {
+        "php": ">=8.5"
     }
 }
