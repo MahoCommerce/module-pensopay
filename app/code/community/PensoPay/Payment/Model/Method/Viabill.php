@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 class PensoPay_Payment_Model_Method_Viabill extends PensoPay_Payment_Model_Method
 {
+    #[\Override]
     protected $_code = 'pensopay_viabill';
+    #[\Override]
     protected $_formBlockType = 'pensopay/form_viabill';
 
     /**

@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 class PensoPay_Payment_Model_Method_Paypal extends PensoPay_Payment_Model_Method
 {
+    #[\Override]
     protected $_code = 'pensopay_paypal';
+    #[\Override]
     protected $_formBlockType = 'pensopay/form_paypal';
 
     /**
