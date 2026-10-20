@@ -38,7 +38,6 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
         //Create order from quote
         $quote = Mage::getSingleton('checkout/session')->getQuote();
         $session = $this->_getSession();
-        $items = $quote->getAllVisibleItems();
 
         /** @var PensoPay_Payment_Helper_Checkout $pensopayCheckoutHelper */
         $pensopayCheckoutHelper = Mage::helper('pensopay/checkout');
@@ -112,9 +111,6 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
 
             $session->unsQuoteId();
             $session->unsRedirectUrl();
-
-            $payment = Mage::getModel('pensopay/payment');
-            $pensopay_state = Mage::getSingleton('core/session')->getPensoPayState();
 
             /** @var PensoPay_Payment_Model_Api $api */
             $api = Mage::getModel('pensopay/api');

@@ -71,7 +71,6 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
             }
         }
 
-        $paymentLink = null;
         try {
 
             $payment = $api->createPayment($order);
@@ -210,8 +209,6 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
         $pensopayCheckoutHelper = Mage::helper('pensopay/checkout');
 
         if ($checksum === $this->getRequest()->getServer('HTTP_QUICKPAY_CHECKSUM_SHA256')) {
-            $operation = end($request->operations);
-
             /** @var PensoPay_Payment_Model_Payment $paymentModel */
             $paymentModel = Mage::getModel('pensopay/payment')->load($request->order_id, 'order_id');
 
@@ -384,9 +381,6 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
 
         /** @var Mage_Checkout_Model_Session $session */
         $session = $pensopayCheckoutHelper->getCheckoutSession();
-
-        /** @var PensoPay_Payment_Model_Api $api */
-        $api = Mage::getModel('pensopay/api');
 
         /** @var PensoPay_Payment_Model_Payment $paymentModel */
         $paymentModel = Mage::getModel('pensopay/payment');
