@@ -116,7 +116,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Edit_Form extends Mage_Ad
         $customerFieldset->addField('customer_city', 'text', [
             'label'                 => $this->_helper->__('City'),
             'title'                 => $this->_helper->__('City'),
-            'name'                  => 'customer_zipcode',
+            'name'                  => 'customer_city',
             'required'              => false,
         ]);
 
