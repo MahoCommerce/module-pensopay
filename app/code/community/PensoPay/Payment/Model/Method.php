@@ -84,9 +84,6 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
     /** @var bool */
     #[\Override]
     protected $_canCreateBillingAgreement   = true;
-    /** @var bool */
-    #[\Override]
-    protected $_canManageRecurringProfiles  = true;
 
     protected PensoPay_Payment_Model_Api $_api;
 
