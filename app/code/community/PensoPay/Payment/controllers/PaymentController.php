@@ -88,7 +88,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
             /** @var PensoPay_Payment_Model_Payment $newPayment */
             $newPayment = Mage::getModel('pensopay/payment');
             $newPayment->setStore($order->getStore());
-            $pensoPayHelper->setTransactionStoreId($order->getStoreId());
+            $pensoPayHelper->setTransactionStoreId((int) $order->getStoreId());
             $newPayment->importFromRemotePayment($payment);
             $newPayment->setLink($paymentLink);
             $newPayment->setIsVirtualterminal(false);
@@ -152,7 +152,7 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
 
         if ($quoteID) {
             $quote = Mage::getModel('sales/quote')->load($quoteID);
-            $quote->setIsActive(0)->save();
+            $quote->setIsActive(false)->save();
         }
 
         if ((int) $pensopayCheckoutHelper->getPaymentConfig('auto_capture') == 1) {
@@ -160,8 +160,8 @@ class PensoPay_Payment_PaymentController extends Mage_Core_Controller_Front_Acti
                 $invoice = $order->prepareInvoice();
                 $invoice->register();
 
-                $invoice->setEmailSent(1);
-                $invoice->getOrder()->setCustomerNoteNotify(1);
+                $invoice->setEmailSent(true);
+                $invoice->getOrder()->setCustomerNoteNotify(true);
                 $invoice->sendEmail(true, '');
 
                 Mage::getModel('core/resource_transaction')->addObject($invoice)->addObject($invoice->getOrder())->save();

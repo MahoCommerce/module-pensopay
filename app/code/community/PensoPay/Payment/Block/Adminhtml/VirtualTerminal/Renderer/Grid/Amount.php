@@ -12,7 +12,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Renderer_Grid_Amount exte
     #[\Override]
     public function render(\Maho\DataObject $row): string
     {
-        $value = $row->getData($this->getColumn()->getIndex());
+        $value = $this->_getValue($row);
         $currency = $row->getData('currency');
         return sprintf('%s %s', $currency, $value);
     }

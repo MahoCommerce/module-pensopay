@@ -57,7 +57,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
              ->setCountryId('DK')
              ->setPostcode('9000');
         $this->getQuote()->getShippingAddress()->collectTotals();
-        $this->getQuote()->getShippingAddress()->setCollectShippingRates(1);
+        $this->getQuote()->getShippingAddress()->setCollectShippingRates(true);
         $this->getQuote()->getShippingAddress()->collectShippingRates();
 
         $this->saveShippingMethod($this->getQuote());
@@ -103,7 +103,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
 
         $quote->getShippingAddress()
               ->setShippingMethod($shippingMethod)
-              ->setCollectShippingRates(1)
+              ->setCollectShippingRates(true)
               ->collectTotals();
 
         $quote->save();
@@ -166,7 +166,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
         $address->setCustomerAddressId(0);
 
         // Additional form data, not fetched by extractData (as it fetches only attributes)
-        $address->setSaveInAddressBook(0);
+        $address->setSaveInAddressBook(false);
 
         // validate billing address
         if (($validateRes = $address->validate()) !== true) {
@@ -188,7 +188,7 @@ class PensoPay_Payment_Model_Type_Mobilepay
             switch ($usingCase) {
                 case 0:
                     $shipping = $quote->getShippingAddress();
-                    $shipping->setSameAsBilling(0);
+                    $shipping->setSameAsBilling(false);
                     $this->saveShipping($quote, $request);
                     break;
                 case 1:
@@ -209,10 +209,10 @@ class PensoPay_Payment_Model_Type_Mobilepay
                         }
                     }
                     $shipping->addData($billing->getData())
-                             ->setSameAsBilling(1)
-                             ->setSaveInAddressBook(0)
+                             ->setSameAsBilling(true)
+                             ->setSaveInAddressBook(false)
                              ->setShippingMethod($shippingMethod)
-                             ->setCollectShippingRates(1);
+                             ->setCollectShippingRates(true);
                     break;
             }
         }
@@ -281,11 +281,11 @@ class PensoPay_Payment_Model_Type_Mobilepay
 
         $address->setCustomerAddressId(0);
         // Additional form data, not fetched by extractData (as it fetches only attributes)
-        $address->setSaveInAddressBook(0);
-        $address->setSameAsBilling(0);
+        $address->setSaveInAddressBook(false);
+        $address->setSameAsBilling(false);
 
         $address->implodeStreetAddress();
-        $address->setCollectShippingRates(1);
+        $address->setCollectShippingRates(true);
     }
 
     /**

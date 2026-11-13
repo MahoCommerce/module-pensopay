@@ -157,7 +157,7 @@ class PensoPay_Payment_Model_Observer
                 $paymentModel->setStore($order->getStore());
                 /** @var PensoPay_Payment_Helper_Data $helper */
                 $helper = Mage::helper('pensopay');
-                $helper->setTransactionStoreId($order->getStoreId());
+                $helper->setTransactionStoreId((int) $order->getStoreId());
                 $paymentModel->updatePaymentRemote(); //make sure we have the latest status
                 if ($paymentModel->canCancel()) {
                     try {
@@ -233,7 +233,7 @@ class PensoPay_Payment_Model_Observer
 
             /** @var PensoPay_Payment_Model_Payment $newPayment */
             $newPayment = Mage::getModel('pensopay/payment');
-            $helper->setTransactionStoreId($order->getStoreId());
+            $helper->setTransactionStoreId((int) $order->getStoreId());
             $newPayment->setStore($order->getStore());
             $newPayment->importFromRemotePayment($payment);
             $newPayment->setLink($paymentLink);
@@ -255,10 +255,10 @@ class PensoPay_Payment_Model_Observer
             $billingAddress = $order->getBillingAddress();
             if ($billingAddress) {
                 $helper->sendEmail(
-                    $billingAddress->getEmail(),
+                    (string) $billingAddress->getEmail(),
                     $billingAddress->getFirstname() . ' ' . $billingAddress->getLastname(),
                     $order->getTotalDue(),
-                    $order->getOrderCurrencyCode(),
+                    (string) $order->getOrderCurrencyCode(),
                     $truePaymentLink,
                 );
             }

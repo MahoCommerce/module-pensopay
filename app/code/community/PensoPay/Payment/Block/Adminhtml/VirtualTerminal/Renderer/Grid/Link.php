@@ -12,7 +12,7 @@ class PensoPay_Payment_Block_Adminhtml_VirtualTerminal_Renderer_Grid_Link extend
     #[\Override]
     public function render(\Maho\DataObject $row): string
     {
-        $value = $row->getData($this->getColumn()->getIndex());
+        $value = $this->_getValue($row);
         if ($value === 'Array' || empty($value) || is_array($value)) { //in case of a corrupted link in the database, show an error
             return $this->__('Error');
         }
