@@ -42,7 +42,7 @@ class PensoPay_Payment_Block_Form_Viabill extends Mage_Payment_Block_Form
                 $this->getSkinUrl('images/pensopaypayment/viabill.png'),
                 Mage::getStoreConfig('payment/pensopay/cardlogos_size'),
                 'Viabill',
-                number_format(Mage::getSingleton('checkout/session')->getQuote()->getGrandTotal(), 2),
+                number_format((float) Mage::getSingleton('checkout/session')->getQuote()->getGrandTotal(), 2),
             );
     }
 }

@@ -23,7 +23,7 @@ class PensoPay_Payment_Helper_Checkout extends Mage_Core_Helper_Abstract
         if ($order && $order->getId()) {
             $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
             if ($quote->getId()) {
-                $quote->setIsActive(1)
+                $quote->setIsActive(true)
                     // setReservedOrderId() magic setter rejects null per its docblock signature
                     ->setData('reserved_order_id', null)
                     ->save();

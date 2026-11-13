@@ -48,7 +48,7 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
         try {
             if (!$quote->getCustomerId() && !$quote->getCustomerEmail()) {
                 $quote->setCustomerEmail(Mage::getStoreConfig('trans_email/ident_general/email'));
-                $quote->setCustomerIsGuest(1);
+                $quote->setCustomerIsGuest(true);
             }
 
             $defaultValue = 'DNK';
@@ -71,7 +71,7 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
             $quote->getShippingAddress()->addData($defaultAddress);
 
             $shippingAddress = $quote->getShippingAddress();
-            $shippingAddress->setCollectShippingRates(1)->collectShippingRates()->setShippingMethod('pensopay_mobilepay_pensopay_mobilepay');
+            $shippingAddress->setCollectShippingRates(true)->collectShippingRates()->setShippingMethod('pensopay_mobilepay_pensopay_mobilepay');
 
             // Set Sales Order Payment
             $quote->getPayment()->importData(['method' => 'pensopay_mobilepay']);
@@ -94,7 +94,7 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
             $order->setBaseGrandTotal($grandTotal);
             $order->save();
 
-            $quote->setIsActive(0)->save();
+            $quote->setIsActive(false)->save();
 
             if ($order->getId()) {
                 $session
@@ -121,7 +121,7 @@ class PensoPay_Payment_MobilepayController extends Mage_Core_Controller_Front_Ac
             /** @var PensoPay_Payment_Model_Payment $newPayment */
             $newPayment = Mage::getModel('pensopay/payment');
             $newPayment->setStore($order->getStore());
-            $pensoPayHelper->setTransactionStoreId($order->getStoreId());
+            $pensoPayHelper->setTransactionStoreId((int) $order->getStoreId());
             $newPayment->importFromRemotePayment($payment);
             $newPayment->setLink($paymentLink);
             $newPayment->setIsVirtualterminal(false);

@@ -84,9 +84,6 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
     /** @var bool */
     #[\Override]
     protected $_canCreateBillingAgreement   = true;
-    /** @var bool */
-    #[\Override]
-    protected $_canManageRecurringProfiles  = true;
 
     protected PensoPay_Payment_Model_Api $_api;
 
@@ -147,7 +144,7 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
         try {
             /** @var PensoPay_Payment_Helper_Data $helper */
             $helper = Mage::helper('pensopay');
-            $helper->setTransactionStoreId($order->getStoreId());
+            $helper->setTransactionStoreId((int) $order->getStoreId());
             $paymentInfo = $this->_api->capture($payment->getReferenceId(), $amount);
             $payment->importFromRemotePayment($paymentInfo);
 
@@ -196,7 +193,7 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
         try {
             /** @var PensoPay_Payment_Helper_Data $helper */
             $helper = Mage::helper('pensopay');
-            $helper->setTransactionStoreId($order->getStoreId());
+            $helper->setTransactionStoreId((int) $order->getStoreId());
             $paymentInfo = $this->_api->refund($payment->getReferenceId(), $amount);
             $payment->importFromRemotePayment($paymentInfo);
 
@@ -243,9 +240,9 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
         }
 
         if ($type == Mage_Sales_Model_Order_Payment_Transaction::TYPE_AUTH) {
-            $transaction->setIsClosed(0);
+            $transaction->setIsClosed(false);
         } else {
-            $transaction->setIsClosed(1);
+            $transaction->setIsClosed(true);
         }
 
         $transaction->setTxnId($transactionId);
@@ -270,6 +267,7 @@ class PensoPay_Payment_Model_Method extends Mage_Payment_Model_Method_Abstract
     /**
      * Get Order place redirect url
      */
+    #[\Override]
     public function getOrderPlaceRedirectUrl(): string
     {
         return Mage::getUrl('pensopay/payment/redirect', ['_secure' => true]);
